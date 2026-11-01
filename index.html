@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0}</style>
+<title>Protokolle und Berichte</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: farbige Vollbreiten-Bänder, alles in Blautönen. Das starke Blau steht für das Protokoll, das Himmelblau für den Bericht, helle Töne wirken als Textmarker, Mittelblau bedeutet erledigt. Harte Schatten wie bei Stempel und Formular. */
+:root {
+  --navy: #0B2A5B;
+  --white: #FFFFFF;
+  --mark: #BBD8FF;
+  --blue: #2F6FE0;
+  --coral: #8FC0FF;
+  --sun: #FFFFFF;
+  --mint: #5E9DF5;
+  --sheet: #FFFFFF;
+  --bg: #F0F7FF;
+  --paper: #FFFFFF;
+  --fg: #0B2A5B;
+  --muted: #4A6491;
+  --line: #CADCF5;
+  --tint: #E3EFFF;
+  --edge: #0B2A5B;
+  --hero: #BBD8FF;
+  --hero-fg: #0B2A5B;
+  --hero-chip: rgba(255, 255, 255, 0.6);
+  --btn-bg: #0B2A5B;
+  --btn-fg: #FFFFFF;
+  --blue-ink: #1F4FB0;
+  --blue-soft: #BBD8FF;
+  --coral-ink: #0B2A5B;
+  --coral-soft: #8FC0FF;
+  --mint-ink: #2F6FE0;
+  --mint-soft: #DCEBFF;
+  --sun-band: #DCEBFF;
+  --mint-band: #E6F1FF;
+  --night: #1B4496;
+  --night-fg: #F0F7FF;
+  --night-muted: #C9DDFA;
+  --stamp: #1F4FB0;
+  --font-display: "Outfit", "Avenir Next", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Outfit", "Avenir Next", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A1630;
+    --paper: #12214A;
+    --fg: #E6F0FF;
+    --muted: #9FB6DD;
+    --line: #27407A;
+    --tint: #1A2D63;
+    --edge: #6B8FD6;
+    --hero: #173A82;
+    --hero-fg: #EAF3FF;
+    --hero-chip: rgba(255, 255, 255, 0.14);
+    --btn-bg: #EAF3FF;
+    --btn-fg: #0B2A5B;
+    --blue-ink: #9CC4FF;
+    --blue-soft: #27449A;
+    --coral-ink: #CFE3FF;
+    --coral-soft: #2F5CC0;
+    --mint-ink: #7DB2FF;
+    --mint-soft: #1B3A7A;
+    --sun-band: #0F2150;
+    --mint-band: #0C1B40;
+    --night: #06112B;
+    --night-muted: #A9C0E8;
+    --stamp: #9CC4FF;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A1630;
+  --paper: #12214A;
+  --fg: #E6F0FF;
+  --muted: #9FB6DD;
+  --line: #27407A;
+  --tint: #1A2D63;
+  --edge: #6B8FD6;
+  --hero: #173A82;
+  --hero-fg: #EAF3FF;
+  --hero-chip: rgba(255, 255, 255, 0.14);
+  --btn-bg: #EAF3FF;
+  --btn-fg: #0B2A5B;
+  --blue-ink: #9CC4FF;
+  --blue-soft: #27449A;
+  --coral-ink: #CFE3FF;
+  --coral-soft: #2F5CC0;
+  --mint-ink: #7DB2FF;
+  --mint-soft: #1B3A7A;
+  --sun-band: #0F2150;
+  --mint-band: #0C1B40;
+  --night: #06112B;
+  --night-muted: #A9C0E8;
+  --stamp: #9CC4FF;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.band { padding-block: 64px; }
+.stack { display: flex; flex-direction: column; gap: 28px; }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.08; }
+h2 { font-size: clamp(1.9rem, 6vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em; }
+a { color: var(--blue-ink); }
+:focus-visible { outline: 3px solid var(--blue-ink); outline-offset: 3px; border-radius: 4px; }
+.hero :focus-visible { outline-color: var(--hero-fg); }
+.night :focus-visible { outline-color: #FFFFFF; }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.eyebrow::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--dot, var(--blue)); border: 2px solid var(--edge); }
+.intro { color: var(--muted); max-width: 60ch; font-size: 1.05rem; }
+
+/* Hero */
+.hero {
+  background: var(--hero); color: var(--hero-fg);
+  margin-top: calc(-1 * env(safe-area-inset-top, 0px));
+  padding-top: calc(env(safe-area-inset-top, 0px) + 44px);
+  padding-bottom: 72px;
+  overflow: hidden;
+}
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.8fr); gap: 32px; align-items: center; }
+.hero-text { display: flex; flex-direction: column; gap: 22px; align-items: flex-start; }
+.badge {
+  font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--white); color: var(--navy); padding: 5px 12px; border-radius: 999px; font-weight: 500;
+}
+h1 { font-size: clamp(2.5rem, 10vw, 4.7rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.02; }
+h1 .pill { display: inline-block; background: var(--hero-fg); color: var(--hero); padding: 0 0.16em 0.04em; border-radius: 0.14em; transform: rotate(-1.8deg); }
+.lead { font-size: 1.12rem; max-width: 46ch; }
+.by { font-family: var(--font-mono); font-size: 0.9rem; letter-spacing: 0.04em; }
+.by strong { font-weight: 500; background: var(--hero-chip); padding: 1px 8px; border-radius: 999px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips a {
+  color: var(--hero-fg); text-decoration: none; font-weight: 600; font-size: 0.95rem;
+  background: var(--hero-chip); padding: 8px 15px; border-radius: 999px; border: 2px solid transparent;
+}
+.chips a:hover { border-color: var(--hero-fg); }
+.cta, button {
+  font: inherit; font-weight: 700; cursor: pointer; min-height: 48px; padding: 11px 22px;
+  display: inline-flex; align-items: center; justify-content: center; text-decoration: none;
+  background: var(--btn-bg); color: var(--btn-fg); border: 2px solid var(--btn-bg); border-radius: 999px;
+  box-shadow: 4px 4px 0 var(--sh, var(--blue));
+}
+.cta:active, button:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--sh, var(--blue)); }
+
+.deco { position: relative; min-height: 290px; display: grid; place-items: center; }
+.deco .sun { position: absolute; width: 150px; height: 150px; border-radius: 50%; background: var(--white); top: 0; right: 4%; }
+.deco .sq { position: absolute; width: 96px; height: 96px; background: var(--blue); border-radius: 16px; transform: rotate(14deg); bottom: 4px; left: 2%; }
+.doc {
+  position: relative; width: min(250px, 80%); background: var(--sheet); color: var(--navy);
+  padding: 20px 18px 26px; transform: rotate(4deg); border: 2px solid var(--navy); box-shadow: 8px 8px 0 var(--navy);
+  display: flex; flex-direction: column; gap: 12px;
+}
+.doc .title { height: 16px; width: 72%; background: var(--blue); border-radius: 3px; }
+.doc .row { display: flex; gap: 10px; align-items: center; }
+.doc .tick { width: 18px; height: 18px; border-radius: 5px; background: var(--mint); border: 2px solid var(--navy); flex: none; }
+.doc .tick.open { background: var(--sheet); }
+.doc .ln { height: 9px; border-radius: 5px; background: #CADCF5; flex: 1; }
+.doc .ln.s { flex: 0.6; }
+.doc-stamp {
+  position: absolute; right: -16px; bottom: -16px; transform: rotate(-12deg); background: var(--sheet);
+  border: 3px solid #1F4FB0; color: #1F4FB0; padding: 4px 10px;
+  font-family: var(--font-mono); font-size: 0.82rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+}
+
+/* Vergleich */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.card { padding: 28px 26px 30px; border-radius: 22px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.card.pro { background: var(--blue); color: var(--white); }
+.card.ber { background: var(--coral); color: var(--navy); }
+.card .kick { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.card .tag { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.2rem, 7vw, 3rem); line-height: 1; letter-spacing: -0.03em; }
+.card dl { margin: 0; }
+.card dl > div { padding: 13px 0; border-top: 1.5px solid color-mix(in srgb, currentColor 38%, transparent); }
+.card dt { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.card dd { margin: 3px 0 0; font-weight: 500; }
+.sum { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.6rem, 5.4vw, 2.4rem); line-height: 1.15; text-wrap: balance; letter-spacing: -0.02em; }
+mark { color: inherit; padding: 0 0.1em; }
+mark.m-blue { background: linear-gradient(transparent 56%, var(--blue-soft) 56%); }
+mark.m-coral { background: linear-gradient(transparent 56%, var(--coral-soft) 56%); }
+
+/* Beispiel */
+.sunband { background: var(--sun-band); }
+.sheet { background: var(--paper); border: 2px solid var(--edge); box-shadow: 8px 8px 0 var(--edge); overflow-x: auto; transform: rotate(-0.5deg); }
+.sheet .tagline { display: block; padding: 9px 16px; background: var(--navy); color: #F0F7FF; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.sheet pre { margin: 0; padding: 18px 16px 22px; font-family: var(--font-mono); font-size: 0.8125rem; line-height: 1.7; color: var(--fg); }
+.sheet .lab { color: var(--blue-ink); font-weight: 500; }
+.sheet .top { background: var(--mark); color: var(--navy); padding: 1px 6px; font-weight: 500; }
+.sheet .erg { color: var(--mint-ink); font-weight: 500; }
+.sheet .aufg { color: var(--coral-ink); font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin: 8px 0 0; padding: 0; list-style: none; }
+.tiles li { padding: 16px 18px 18px; border-radius: 12px; min-width: 0; color: var(--fg); }
+.tiles li:nth-child(1) { background: var(--paper); }
+.tiles li:nth-child(2) { background: var(--blue-soft); }
+.tiles li:nth-child(3) { background: var(--coral-soft); }
+.tiles strong { display: block; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; }
+.tiles span { font-size: 0.97rem; }
+
+/* Folien */
+.mintband { background: var(--sun-band); }
+.slides-box { display: flex; gap: 36px; align-items: center; flex-wrap: wrap; }
+.stackdeco { position: relative; width: 190px; height: 130px; flex: none; margin-left: 6px; }
+.stackdeco i { position: absolute; inset: 0; border: 2px solid var(--navy); box-shadow: 4px 4px 0 var(--navy); }
+.stackdeco i:nth-child(1) { background: var(--blue); transform: rotate(-9deg); }
+.stackdeco i:nth-child(2) { background: var(--coral); transform: rotate(-3deg); }
+.stackdeco i:nth-child(3) { background: var(--mark); transform: rotate(4deg); }
+.stackdeco i:nth-child(4) { background: var(--sheet); transform: rotate(0); display: flex; flex-direction: column; gap: 9px; padding: 16px 14px; }
+.stackdeco b { display: block; height: 10px; border-radius: 5px; background: #CADCF5; }
+.stackdeco b:first-child { width: 60%; background: var(--navy); height: 12px; }
+.slides-text { flex: 1 1 260px; display: flex; flex-direction: column; gap: 10px; }
+.slides-text p:first-child { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; line-height: 1.2; }
+.slides-text p:last-child { color: var(--muted); }
+
+
+/* Folien als Karussell */
+.deck { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; border: 2px solid var(--navy); box-shadow: 8px 8px 0 var(--edge); background: var(--paper); scrollbar-width: none; }
+.deck::-webkit-scrollbar { display: none; }
+.slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; display: grid; position: relative; min-height: 340px; }
+.s-kick { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.slide h3 { font-size: clamp(1.7rem, 5vw, 2.7rem); font-weight: 800; text-transform: uppercase; line-height: 1.02; letter-spacing: -0.01em; }
+.s-head, .p-left { display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 28px 24px 28px 32px; min-width: 0; }
+.pro .s-head, .pro .p-left { background: var(--blue); color: var(--white); }
+.ber .s-head, .ber .p-left { background: var(--coral); color: var(--navy); }
+.split { grid-template-columns: minmax(0, 0.42fr) minmax(0, 0.58fr); }
+.split::after { content: ""; position: absolute; left: 42%; top: 50%; width: 30px; height: 30px; border: 3px solid var(--white); border-radius: 50%; transform: translate(-50%, -50%); z-index: 2; }
+.s-panel { background: var(--paper); color: var(--fg); clip-path: polygon(0 50%, 34% 0, 100% 0, 100% 100%, 34% 100%); padding: 28px 28px 28px 40%; display: flex; align-items: center; min-width: 0; }
+.s-panel ul, .p-left ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 12px; font-weight: 600; }
+.p-left ul { gap: 5px; font-size: 1.05rem; }
+.cards3 { background: var(--paper); color: var(--fg); padding: 26px 20px 32px; align-content: center; gap: 22px; }
+.cards3 .s-head { background: none; color: var(--fg); padding: 0; align-items: center; text-align: center; }
+.trio { display: flex; justify-content: center; align-items: center; width: 100%; }
+.mini { width: min(200px, 29%); min-height: 240px; border-radius: 20px; padding: 18px 16px 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: 4px 4px 0 var(--navy); }
+.mini b { font-family: var(--font-display); text-transform: uppercase; font-size: 1.05rem; line-height: 1.1; }
+.mini span { font-size: 0.95rem; font-weight: 500; }
+.mini.c1 { background: var(--coral); color: var(--navy); transform: rotate(-8deg) translateX(16px); }
+.mini.c2 { background: var(--blue); color: var(--white); position: relative; z-index: 1; }
+.mini.c3 { background: #1B3A80; color: var(--white); transform: rotate(8deg) translateX(-16px); }
+.praxis { grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr); }
+.p-right { background: var(--paper); color: var(--fg); padding: 24px 26px 26px; display: flex; flex-direction: column; gap: 12px; min-width: 0; font-size: 0.93rem; }
+.p-right h4 { margin: 0; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; }
+.doc-h { font-weight: 600; }
+.p-right table { border-collapse: collapse; width: 100%; border: 1.5px solid var(--edge); }
+.p-right th, .p-right td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; }
+.p-right th { background: var(--tint); width: 30%; font-weight: 600; }
+.merk { border-top: 1.5px solid var(--line); padding-top: 10px; color: var(--muted); }
+.merk strong { color: var(--fg); }
+.deck-ctrl { display: flex; align-items: center; gap: 16px; }
+.deck-ctrl button { min-width: 56px; font-size: 1.2rem; padding-inline: 16px; }
+.slidecount { font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; }
+@media (min-width: 700px) { .slide { min-height: 480px; } }
+@media (max-width: 699px) {
+  .split, .praxis { grid-template-columns: minmax(0, 1fr); }
+  .split::after { display: none; }
+  .s-panel { clip-path: none; padding: 22px 22px 26px; }
+  .s-head, .p-left { padding: 24px 22px; }
+  .trio { flex-direction: column; align-items: stretch; gap: 12px; }
+  .mini { width: 100%; min-height: 0; }
+  .mini.c1, .mini.c3 { transform: none; }
+}
+
+
+/* Aufbau und Vorgehensweise */
+.aufbau { grid-template-columns: minmax(0, 0.44fr) minmax(0, 0.56fr); }
+.a-head { display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 28px 24px 28px 32px; min-width: 0; }
+.pro .a-head { background: var(--blue); color: var(--white); }
+.ber .a-head { background: var(--coral); color: var(--navy); }
+.a-head h3 { font-size: clamp(1.5rem, 4vw, 2.2rem); }
+.parts { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.parts li { font-size: 0.85rem; font-weight: 600; padding: 5px 12px; border: 2px solid currentColor; border-radius: 999px; }
+.pro .parts li.on { background: var(--white); color: var(--navy); border-color: var(--white); }
+.ber .parts li.on { background: var(--navy); color: var(--white); border-color: var(--navy); }
+.a-body { background: var(--paper); color: var(--fg); padding: 32px 30px; display: flex; flex-direction: column; justify-content: center; gap: 16px; min-width: 0; }
+.a-part { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.6rem, 4vw, 2.3rem); line-height: 1.05; text-transform: uppercase; letter-spacing: -0.01em; color: var(--blue-ink); }
+.a-body ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 10px; font-weight: 500; font-size: 1.08rem; }
+.a-body ul.sub { margin-top: 8px; gap: 4px; font-size: 1rem; }
+.a-body ul.sub b { font-weight: 700; }
+.steps { background: var(--blue-soft); color: var(--fg); padding: 30px 32px 34px; align-content: center; gap: 24px; }
+.st-head { display: flex; flex-direction: column; gap: 16px; }
+.st-head h3 { font-size: clamp(1.3rem, 3.6vw, 1.9rem); }
+.stepnums { list-style: none; margin: 0; padding: 0; display: flex; gap: 10px; }
+.stepnums li { width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--fg); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; }
+.stepnums li.on { background: var(--blue); border-color: var(--blue); color: var(--white); }
+.st-body { display: flex; flex-direction: column; gap: 14px; }
+.st-title { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.7rem, 5vw, 2.5rem); line-height: 1.05; text-transform: uppercase; letter-spacing: -0.01em; }
+.st-body ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 8px; font-weight: 500; font-size: 1.1rem; }
+.st-body ul.chiplist { list-style: none; padding: 0; flex-direction: row; flex-wrap: wrap; gap: 10px; }
+.st-body ul.chiplist li { background: var(--paper); border: 2px solid var(--fg); border-radius: 999px; padding: 6px 18px; font-family: var(--font-display); font-weight: 700; font-size: 1.25rem; }
+@media (max-width: 699px) {
+  .aufbau { grid-template-columns: minmax(0, 1fr); }
+  .a-head { padding: 24px 22px; }
+  .a-body { padding: 22px 22px 26px; }
+  .steps { padding: 24px 22px 28px; }
+}
+
+/* Checkliste */
+.night { background: var(--night); color: var(--night-fg); padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 64px); margin-bottom: calc(-1 * env(safe-area-inset-bottom, 0px)); }
+.night .intro, .night .hint, .night .status { color: var(--night-muted); }
+.night .eyebrow { color: var(--mark); }
+.night .eyebrow::before { background: var(--mark); border-color: var(--mark); }
+.list-wrap { background: var(--paper); color: var(--fg); border: 2px solid var(--navy); box-shadow: 8px 8px 0 var(--mint); max-width: 720px; }
+.progress { display: flex; align-items: center; gap: 14px; padding: 16px; border-bottom: 2px solid var(--line); flex-wrap: wrap; }
+.progress #count { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.meter { flex: 1 1 140px; height: 14px; background: var(--tint); border: 2px solid var(--fg); border-radius: 8px; overflow: hidden; }
+.meter div { height: 100%; width: 0; background: var(--mint); }
+.stamp {
+  font-family: var(--font-mono); font-weight: 500; font-size: 0.82rem; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 5px 12px; border: 2px dashed var(--muted); color: var(--muted); transform: rotate(-4deg); white-space: nowrap;
+}
+.stamp[data-done="true"] { border: 3px solid var(--stamp); color: var(--stamp); transform: rotate(-6deg); }
+fieldset { border: 0; margin: 0; padding: 0 0 6px; min-width: 0; }
+fieldset + fieldset { border-top: 2px solid var(--line); }
+legend { float: left; width: 100%; padding: 16px 16px 6px; }
+legend span { display: inline-block; font-family: var(--font-mono); font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 999px; color: var(--navy); }
+.g-blue legend span { background: var(--blue); color: var(--white); }
+.g-coral legend span { background: var(--coral); }
+.g-sun legend span { background: var(--mark); }
+.g-mint legend span { background: var(--mint); }
+fieldset ul { clear: both; list-style: none; margin: 0; padding: 0 8px; }
+.check label { display: flex; gap: 14px; align-items: flex-start; padding: 10px 8px; min-height: 48px; cursor: pointer; border-radius: 8px; }
+.check label:hover { background: var(--tint); }
+.check input {
+  appearance: none; -webkit-appearance: none; width: 1.55rem; height: 1.55rem; flex: none; margin: 1px 0 0; cursor: pointer;
+  border: 2px solid var(--fg); border-radius: 7px; background: var(--paper);
+}
+.check input:checked {
+  background: var(--mint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230B2A5B' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 82% no-repeat;
+  border-color: var(--navy);
+}
+.check input:checked + span { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+.actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.actions button { --sh: var(--mint); background: #FFFFFF; color: var(--navy); border-color: #FFFFFF; }
+.actions button.ghost { background: transparent; color: #FFFFFF; border-color: #FFFFFF; box-shadow: none; }
+.status { min-height: 1.6em; font-size: 0.95rem; }
+.hint { font-size: 0.9rem; max-width: 60ch; }
+#plain { width: 100%; max-width: 720px; min-height: 180px; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.8rem; background: var(--paper); color: var(--fg); border: 2px solid var(--navy); padding: 10px; }
+
+@media (max-width: 760px) {
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
+  .deco { min-height: 270px; }
+  .band { padding-block: 52px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .meter div { transition: width 0.3s ease; }
+  .stamp { transition: transform 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
+  .chips a, .cta, button { transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease; }
+  @keyframes thunk {
+    0% { transform: scale(2.4) rotate(-20deg); opacity: 0; }
+    60% { transform: scale(0.92) rotate(-6deg); opacity: 1; }
+    100% { transform: scale(1) rotate(-6deg); opacity: 1; }
+  }
+  .stamp.pop { animation: thunk 0.45s ease-out; }
+}
+</style>
+
+<header class="band hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-text">
+      <p class="badge">Handout zur Präsentation</p>
+      <h1><span class="pill">Protokolle</span> und Berichte schreiben</h1>
+      <p class="lead">Was ist der Unterschied zwischen beiden und was prüfst du vor dem Abgeben? Hier findest du alles zur Präsentation.</p>
+      <p class="by">Präsentation von <strong>Frida</strong> und <strong>Nissrine</strong></p>
+      <a class="cta" href="#checkliste">Zur Checkliste</a>
+      <nav class="chips" aria-label="Abschnitte">
+        <a href="#unterschied">Vergleich</a>
+        <a href="#folien">Folien</a>
+        <a href="#checkliste">Checkliste</a>
+      </nav>
+    </div>
+    <div class="deco" aria-hidden="true">
+      <div class="sun"></div>
+      <div class="sq"></div>
+      <div class="doc">
+        <div class="title"></div>
+        <div class="row"><span class="tick"></span><span class="ln"></span></div>
+        <div class="row"><span class="tick"></span><span class="ln s"></span></div>
+        <div class="row"><span class="tick"></span><span class="ln"></span></div>
+        <div class="row"><span class="tick open"></span><span class="ln s"></span></div>
+        <span class="doc-stamp">Geprüft</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="band" id="unterschied">
+  <div class="wrap stack">
+    <span class="eyebrow">Vergleich</span>
+    <h2>Protokoll oder Bericht?</h2>
+    <p class="intro">Beide halten etwas Vergangenes fest, aber sie haben verschiedene Aufgaben und verschiedene Leser.</p>
+    <div class="cards">
+      <article class="card pro">
+        <span class="kick">Das Protokoll</span>
+        <p class="tag">hält fest</p>
+        <dl>
+          <div><dt>Zweck</dt><dd>Hält fest, was besprochen, beschlossen oder beobachtet wurde.</dd></div>
+          <div><dt>Zeitpunkt</dt><dd>Entsteht während oder direkt nach dem Anlass.</dd></div>
+          <div><dt>Stil</dt><dd>Kurz und sachlich, meist im Präsens.</dd></div>
+          <div><dt>Formen</dt><dd>Ergebnisprotokoll, Verlaufsprotokoll, Versuchsprotokoll</dd></div>
+        </dl>
+      </article>
+      <article class="card ber">
+        <span class="kick">Der Bericht</span>
+        <p class="tag">erzählt</p>
+        <dl>
+          <div><dt>Zweck</dt><dd>Schildert ein Geschehen zusammenhängend und ordnet es ein.</dd></div>
+          <div><dt>Zeitpunkt</dt><dd>Entsteht im Rückblick, wenn alles abgeschlossen ist.</dd></div>
+          <div><dt>Stil</dt><dd>Ausführlicher Fließtext, sachlich, meist in der Vergangenheit.</dd></div>
+          <div><dt>Formen</dt><dd>Tätigkeitsbericht, Praktikumsbericht, Unfallbericht</dd></div>
+        </dl>
+      </article>
+    </div>
+    <p class="sum">Ein Protokoll <mark class="m-blue">hält fest</mark>, ein Bericht <mark class="m-coral">erzählt</mark>.</p>
+  </div>
+</section>
+
+<section class="band mintband" id="folien">
+  <div class="wrap stack">
+    <span class="eyebrow" style="--dot: var(--mint)">Folien</span>
+    <h2>Die Folien zum Vortrag</h2>
+    <p class="intro">Die wichtigsten Folien der Präsentation. Wische zur Seite oder tippe auf die Pfeile.</p>
+    <div class="deck" id="deck" tabindex="0" role="region" aria-roledescription="Karussell" aria-label="Folien der Präsentation">
+
+<article class="slide split pro" aria-label="Folie 1 von 24">
+  <div class="s-head"><span class="s-kick">Protokoll</span><h3>Was ist ein Protokoll?</h3></div>
+  <div class="s-panel"><ul><li>Schriftliche Dokumentation eines Gesprächs, einer Sitzung oder eines Ereignisses</li><li>Hält wichtige Aussagen, Entscheidungen und Ergebnisse fest</li><li>Macht den Ablauf nachvollziehbar</li><li>Dient als Nachweis und Erinnerung</li></ul></div>
+</article>
+
+<article class="slide split ber" aria-label="Folie 2 von 24">
+  <div class="s-head"><span class="s-kick">Bericht</span><h3>Was ist ein Bericht?</h3></div>
+  <div class="s-panel"><ul><li>Schriftliche Darstellung eines Ereignisses oder Vorgangs</li><li>Gibt relevante Informationen und Fakten wieder</li><li>Ist übersichtlich und sachlich aufgebaut</li><li>Beantwortet die wichtigsten W-Fragen</li></ul></div>
+</article>
+
+<article class="slide split pro" aria-label="Folie 3 von 24">
+  <div class="s-head"><span class="s-kick">Protokoll</span><h3>Zweck und Bedeutung</h3></div>
+  <div class="s-panel"><ul><li>Schafft Verbindlichkeit bei getroffenen Entscheidungen</li><li>Ermöglicht eine spätere Nachprüfung</li><li>Unterstützt die weitere Zusammenarbeit</li><li>Sichert wichtige Informationen langfristig</li></ul></div>
+</article>
+
+<article class="slide split ber" aria-label="Folie 4 von 24">
+  <div class="s-head"><span class="s-kick">Bericht</span><h3>Zweck und Bedeutung</h3></div>
+  <div class="s-panel"><ul><li>Schafft eine Informationsgrundlage</li><li>Ermöglicht anderen, sich schnell einen Überblick zu verschaffen</li><li>Unterstützt die Planung und Entscheidungsfindung</li><li>Macht Vorgänge transparent und nachvollziehbar</li></ul></div>
+</article>
+
+<article class="slide cards3" aria-label="Folie 5 von 24">
+  <div class="s-head"><span class="s-kick">Protokoll</span><h3>Arten von Protokollen</h3></div>
+  <div class="trio"><div class="mini c1"><b>Verlaufsprotokoll</b><span>Gibt den Ablauf einer Besprechung ausführlich wieder.</span></div><div class="mini c2"><b>Ergebnisprotokoll</b><span>Hält vor allem Entscheidungen und Ergebnisse fest.</span></div><div class="mini c3"><b>Kurzprotokoll</b><span>Fasst die wichtigsten Punkte knapp zusammen.</span></div></div>
+</article>
+
+<article class="slide cards3" aria-label="Folie 6 von 24">
+  <div class="s-head"><span class="s-kick">Bericht</span><h3>Arten von Berichten</h3></div>
+  <div class="trio"><div class="mini c1"><b>Unfallbericht</b><span>Beschreibt einen Unfall sachlich und genau.</span></div><div class="mini c2"><b>Praktikums-/ Tätigkeitsbericht</b><span>Dokumentiert Tätigkeiten und Erfahrungen.</span></div><div class="mini c3"><b>Sachbericht</b><span>Informiert über einen bestimmten Sachverhalt oder Vorgang.</span></div></div>
+</article>
+
+<article class="slide aufbau pro" aria-label="Folie 7 von 24">
+  <div class="a-head"><span class="s-kick">Protokoll</span><h3>Aufbau und Inhalt eines Protokolls</h3><ul class="parts" aria-label="Bestandteile"><li class="on" aria-current="step">Überschrift</li><li>Angaben</li><li>Tagesordnung/ Thema</li><li>Verlauf</li><li>Ergebnisse/ Beschlüsse</li><li>Unterschrift</li></ul></div>
+  <div class="a-body"><p class="a-part">Überschrift</p><ul><li>Thema der Sitzung oder Veranstaltung</li><li>Zum Beispiel: „Protokoll der Klassenkonferenz“</li></ul></div>
+</article>
+
+<article class="slide aufbau pro" aria-label="Folie 8 von 24">
+  <div class="a-head"><span class="s-kick">Protokoll</span><h3>Aufbau und Inhalt eines Protokolls</h3><ul class="parts" aria-label="Bestandteile"><li>Überschrift</li><li class="on" aria-current="step">Angaben</li><li>Tagesordnung/ Thema</li><li>Verlauf</li><li>Ergebnisse/ Beschlüsse</li><li>Unterschrift</li></ul></div>
+  <div class="a-body"><p class="a-part">Angaben</p><ul><li>Datum und Ort</li><li>Beginn und Ende der Sitzung</li><li>Teilnehmer und eventuell abwesende Personen</li><li>Name des Protokollführers</li></ul></div>
+</article>
+
+<article class="slide aufbau pro" aria-label="Folie 9 von 24">
+  <div class="a-head"><span class="s-kick">Protokoll</span><h3>Aufbau und Inhalt eines Protokolls</h3><ul class="parts" aria-label="Bestandteile"><li>Überschrift</li><li>Angaben</li><li class="on" aria-current="step">Tagesordnung/ Thema</li><li>Verlauf</li><li>Ergebnisse/ Beschlüsse</li><li>Unterschrift</li></ul></div>
+  <div class="a-body"><p class="a-part">Tagesordnung/ Thema</p><ul><li>Themen und Punkte, die besprochen werden sollen</li><li>Die einzelnen Punkte werden übersichtlich aufgelistet</li></ul></div>
+</article>
+
+<article class="slide aufbau pro" aria-label="Folie 10 von 24">
+  <div class="a-head"><span class="s-kick">Protokoll</span><h3>Aufbau und Inhalt eines Protokolls</h3><ul class="parts" aria-label="Bestandteile"><li>Überschrift</li><li>Angaben</li><li>Tagesordnung/ Thema</li><li class="on" aria-current="step">Verlauf</li><li>Ergebnisse/ Beschlüsse</li><li>Unterschrift</li></ul></div>
+  <div class="a-body"><p class="a-part">Verlauf</p><ul><li>Wichtige Aussagen und Beiträge werden festgehalten</li><li>Die Reihenfolge des Gesprächs wird berücksichtigt</li><li>Wesentliche Argumente und Vorschläge werden genannt</li><li>Unwichtige Einzelheiten werden weggelassen</li></ul></div>
+</article>
+
+<article class="slide aufbau pro" aria-label="Folie 11 von 24">
+  <div class="a-head"><span class="s-kick">Protokoll</span><h3>Aufbau und Inhalt eines Protokolls</h3><ul class="parts" aria-label="Bestandteile"><li>Überschrift</li><li>Angaben</li><li>Tagesordnung/ Thema</li><li>Verlauf</li><li class="on" aria-current="step">Ergebnisse/ Beschlüsse</li><li>Unterschrift</li></ul></div>
+  <div class="a-body"><p class="a-part">Ergebnisse/ Beschlüsse</p><ul><li>Welche Entscheidungen wurden getroffen?</li><li>Welche Aufgaben wurden verteilt?</li><li>Was wurde vereinbart?</li></ul></div>
+</article>
+
+<article class="slide aufbau pro" aria-label="Folie 12 von 24">
+  <div class="a-head"><span class="s-kick">Protokoll</span><h3>Aufbau und Inhalt eines Protokolls</h3><ul class="parts" aria-label="Bestandteile"><li>Überschrift</li><li>Angaben</li><li>Tagesordnung/ Thema</li><li>Verlauf</li><li>Ergebnisse/ Beschlüsse</li><li class="on" aria-current="step">Unterschrift</li></ul></div>
+  <div class="a-body"><p class="a-part">Unterschrift</p><ul><li>Ende der Sitzung</li><li>Datum und ggf. Unterschrift des Protokollführers</li></ul></div>
+</article>
+
+<article class="slide aufbau ber" aria-label="Folie 13 von 24">
+  <div class="a-head"><span class="s-kick">Bericht</span><h3>Aufbau und Inhalt eines Berichts</h3><ul class="parts" aria-label="Bestandteile"><li class="on" aria-current="step">Überschrift</li><li>Einleitung</li><li>Hauptteil</li><li>Schluss</li><li>Sprache</li></ul></div>
+  <div class="a-body"><p class="a-part">Überschrift</p><ul><li>Gibt kurz und genau an, worum es im Bericht geht</li><li>Beispiel: „Unfall auf dem Schulhof“</li></ul></div>
+</article>
+
+<article class="slide aufbau ber" aria-label="Folie 14 von 24">
+  <div class="a-head"><span class="s-kick">Bericht</span><h3>Aufbau und Inhalt eines Berichts</h3><ul class="parts" aria-label="Bestandteile"><li>Überschrift</li><li class="on" aria-current="step">Einleitung</li><li>Hauptteil</li><li>Schluss</li><li>Sprache</li></ul></div>
+  <div class="a-body"><p class="a-part">Einleitung</p><ul><li>Beantwortet die wichtigsten W-Fragen:<ul class="sub"><li><b>Wer?</b> Wer war beteiligt?</li><li><b>Was?</b> Was ist passiert?</li><li><b>Wann?</b> Wann ist es passiert?</li><li><b>Wo?</b> Wo ist es passiert?</li></ul></li></ul></div>
+</article>
+
+<article class="slide aufbau ber" aria-label="Folie 15 von 24">
+  <div class="a-head"><span class="s-kick">Bericht</span><h3>Aufbau und Inhalt eines Berichts</h3><ul class="parts" aria-label="Bestandteile"><li>Überschrift</li><li>Einleitung</li><li class="on" aria-current="step">Hauptteil</li><li>Schluss</li><li>Sprache</li></ul></div>
+  <div class="a-body"><p class="a-part">Hauptteil</p><ul><li>Beschreibt den genauen Ablauf des Ereignisses</li><li>Die Ereignisse werden meist in zeitlicher Reihenfolge dargestellt</li><li>Weitere W-Fragen werden beantwortet:<ul class="sub"><li><b>Wie?</b> Wie ist es passiert?</li><li><b>Warum?</b> Warum ist es passiert?</li></ul></li><li>Wichtige Einzelheiten werden sachlich beschrieben</li></ul></div>
+</article>
+
+<article class="slide aufbau ber" aria-label="Folie 16 von 24">
+  <div class="a-head"><span class="s-kick">Bericht</span><h3>Aufbau und Inhalt eines Berichts</h3><ul class="parts" aria-label="Bestandteile"><li>Überschrift</li><li>Einleitung</li><li>Hauptteil</li><li class="on" aria-current="step">Schluss</li><li>Sprache</li></ul></div>
+  <div class="a-body"><p class="a-part">Schluss</p><ul><li>Was ist am Ende passiert?</li><li>Welche Folgen hatte das Ereignis?</li><li>Weitere Maßnahmen oder Ereignisse nennen</li></ul></div>
+</article>
+
+<article class="slide aufbau ber" aria-label="Folie 17 von 24">
+  <div class="a-head"><span class="s-kick">Bericht</span><h3>Aufbau und Inhalt eines Berichts</h3><ul class="parts" aria-label="Bestandteile"><li>Überschrift</li><li>Einleitung</li><li>Hauptteil</li><li>Schluss</li><li class="on" aria-current="step">Sprache</li></ul></div>
+  <div class="a-body"><p class="a-part">Sprache</p><ul><li>Sachlich und objektiv schreiben</li><li>Eigene Meinung vermeiden</li><li>Übertreibungen vermeiden</li><li>Verständliche Formulierungen verwenden</li><li>Genau formulieren</li><li>Präteritum verwenden</li></ul></div>
+</article>
+
+<article class="slide steps" aria-label="Folie 18 von 24">
+  <div class="st-head"><h3>Vorgehensweise bei der Erstellung</h3><ol class="stepnums" aria-label="Schritt 1 von 5"><li class="on" aria-current="step">1</li><li>2</li><li>3</li><li>4</li><li>5</li></ol></div>
+  <div class="st-body"><p class="st-title">Informationen sammeln</p><ul><li>Wichtige Fakten und Aussagen notieren</li><li>Unwichtige Informationen weglassen</li><li>Alle wichtigen Informationen zum Ereignis zusammentragen</li></ul></div>
+</article>
+
+<article class="slide steps" aria-label="Folie 19 von 24">
+  <div class="st-head"><h3>Vorgehensweise bei der Erstellung</h3><ol class="stepnums" aria-label="Schritt 2 von 5"><li>1</li><li class="on" aria-current="step">2</li><li>3</li><li>4</li><li>5</li></ol></div>
+  <div class="st-body"><p class="st-title">W-Fragen beantworten</p><ul class="chiplist"><li>Wer?</li><li>Was?</li><li>Wann?</li><li>Wo?</li><li>Wie?</li><li>Warum?</li></ul></div>
+</article>
+
+<article class="slide steps" aria-label="Folie 20 von 24">
+  <div class="st-head"><h3>Vorgehensweise bei der Erstellung</h3><ol class="stepnums" aria-label="Schritt 3 von 5"><li>1</li><li>2</li><li class="on" aria-current="step">3</li><li>4</li><li>5</li></ol></div>
+  <div class="st-body"><p class="st-title">Informationen ordnen</p><ul><li>Ereignisse in eine sinnvolle Reihenfolge bringen</li><li>Beim Protokoll: Tagesordnung und Gesprächsverlauf beachten</li><li>Beim Bericht: Ereignisse meistens chronologisch ordnen</li></ul></div>
+</article>
+
+<article class="slide steps" aria-label="Folie 21 von 24">
+  <div class="st-head"><h3>Vorgehensweise bei der Erstellung</h3><ol class="stepnums" aria-label="Schritt 4 von 5"><li>1</li><li>2</li><li>3</li><li class="on" aria-current="step">4</li><li>5</li></ol></div>
+  <div class="st-body"><p class="st-title">Text überprüfen</p><ul><li>Sind alle wichtigen Informationen enthalten?</li><li>Wurden die W-Fragen beantwortet?</li><li>Ist der Text verständlich und sachlich?</li><li>Rechtschreibung und Grammatik überprüfen</li><li>Unwichtige Wiederholungen entfernen</li></ul></div>
+</article>
+
+<article class="slide steps" aria-label="Folie 22 von 24">
+  <div class="st-head"><h3>Vorgehensweise bei der Erstellung</h3><ol class="stepnums" aria-label="Schritt 5 von 5"><li>1</li><li>2</li><li>3</li><li>4</li><li class="on" aria-current="step">5</li></ol></div>
+  <div class="st-body"><p class="st-title">Fertigstellen</p><ul><li>Überschrift ergänzen</li><li>Absätze übersichtlich gestalten</li><li>Beim Protokoll ggf. Unterschrift hinzufügen</li></ul></div>
+</article>
+
+<article class="slide praxis pro" aria-label="Folie 23 von 24">
+  <div class="p-left">
+    <span class="s-kick">Protokoll</span>
+    <h3>Praxisbeispiel</h3>
+    <ul><li>Stichpunktartig</li><li>Gesprächsverlauf</li><li>Wichtige Aussagen</li><li>Beschlüsse und Ergebnisse</li></ul>
+  </div>
+  <div class="p-right">
+    <h4>Praxisbeispiel: Protokoll</h4>
+    <p class="doc-h">Unfallprotokoll</p>
+    <table><tbody>
+      <tr><th scope="row">Datum</th><td>14.09.2026</td></tr>
+      <tr><th scope="row">Uhrzeit</th><td>10:20 Uhr</td></tr>
+      <tr><th scope="row">Ort</th><td>Schulhof</td></tr>
+      <tr><th scope="row">Beteiligte</th><td>Schüler Max M., Frau Müller</td></tr>
+    </tbody></table>
+    <p>Um 10:20 Uhr stürzte Max M. während der Pause auf dem Schulhof. Dabei verletzte er sich am rechten Knie. Frau Müller leistete Erste Hilfe und begleitete den Schüler anschließend ins Sekretariat. Dort wurde die Wunde versorgt. Die Eltern wurden informiert.</p>
+    <p class="merk"><strong>Merkmal eines Protokolls:</strong> Das Geschehen wird knapp, genau und sachlich festgehalten und dokumentiert.</p>
+  </div>
+</article>
+
+<article class="slide praxis ber" aria-label="Folie 24 von 24">
+  <div class="p-left">
+    <span class="s-kick">Bericht</span>
+    <h3>Praxisbeispiel</h3>
+    <ul><li>Ausformulierter Text</li><li>Ablauf eines Ereignisses</li><li>W-Fragen beantwortet</li><li>Sachliche Darstellung</li></ul>
+  </div>
+  <div class="p-right">
+    <h4>Praxisbeispiel: Bericht</h4>
+    <p class="doc-h">Unfall auf dem Schulhof</p>
+    <p>Am Montag, dem 14. September 2026, kam es gegen 10:20 Uhr während der großen Pause zu einem Unfall auf dem Schulhof. Der Schüler Max M. rannte mit mehreren Mitschülern über den Hof. Dabei stolperte er und fiel auf den Boden.</p>
+    <p>Bei dem Sturz verletzte er sich am rechten Knie. Die aufsichtsführende Lehrerin Frau Müller bemerkte den Unfall und leistete sofort Erste Hilfe. Anschließend brachte sie Max Müller ins Sekretariat, wo seine Wunde versorgt wurde. Danach wurden seine Eltern über den Vorfall informiert.</p>
+    <p class="merk"><strong>Merkmal eines Berichts:</strong> Das Ereignis wird sachlich, aber ausführlicher und als zusammenhängender Ablauf dargestellt. Wichtige W-Fragen werden beantwortet.</p>
+  </div>
+</article>
+
+    </div>
+    <div class="deck-ctrl">
+      <button type="button" id="prev" aria-label="Vorherige Folie">←</button>
+      <span id="slidecount" class="slidecount" aria-live="polite">1 von 24</span>
+      <button type="button" id="next" aria-label="Nächste Folie">→</button>
+    </div>
+  </div>
+</section>
+
+<section class="band night" id="checkliste">
+  <div class="wrap stack">
+    <span class="eyebrow">Checkliste</span>
+    <h2>Vor dem Abgeben prüfen</h2>
+    <p class="intro">Hake ab, was erledigt ist. Wenn alles passt, bekommt dein Text den Stempel. Die Liste gilt für Protokolle und Berichte.</p>
+
+    <div class="list-wrap">
+      <div class="progress">
+        <span id="count">0 von 13 erledigt</span>
+        <div class="meter" aria-hidden="true"><div id="bar"></div></div>
+        <span id="stamp" class="stamp" data-done="false">Offen</span>
+      </div>
+
+      <div class="check">
+        <fieldset class="g-blue" data-group="Kopf">
+          <legend><span>Kopf</span></legend>
+          <ul>
+            <li><label for="c1"><input type="checkbox" id="c1"><span>Titel nennt die Art des Textes (zum Beispiel Ergebnisprotokoll)</span></label></li>
+            <li><label for="c2"><input type="checkbox" id="c2"><span>Datum, Ort sowie Beginn und Ende stehen drin</span></label></li>
+            <li><label for="c3"><input type="checkbox" id="c3"><span>Teilnehmende und Schreibende sind genannt</span></label></li>
+          </ul>
+        </fieldset>
+        <fieldset class="g-coral" data-group="Inhalt">
+          <legend><span>Inhalt</span></legend>
+          <ul>
+            <li><label for="c4"><input type="checkbox" id="c4"><span>Es gibt eine Gliederung oder Tagesordnung</span></label></li>
+            <li><label for="c5"><input type="checkbox" id="c5"><span>Nur Wichtiges steht drin, keine Mitschrift Wort für Wort</span></label></li>
+            <li><label for="c6"><input type="checkbox" id="c6"><span>Beschlüsse nennen Verantwortliche und Frist</span></label></li>
+            <li><label for="c7"><input type="checkbox" id="c7"><span>Beim Bericht: Wer, was, wann, wo, wie und warum sind beantwortet</span></label></li>
+          </ul>
+        </fieldset>
+        <fieldset class="g-sun" data-group="Sprache">
+          <legend><span>Sprache</span></legend>
+          <ul>
+            <li><label for="c8"><input type="checkbox" id="c8"><span>Sachlich geschrieben, ohne eigene Meinung</span></label></li>
+            <li><label for="c9"><input type="checkbox" id="c9"><span>Die Zeitform ist im ganzen Text gleich</span></label></li>
+            <li><label for="c10"><input type="checkbox" id="c10"><span>Kurze, klare Sätze</span></label></li>
+          </ul>
+        </fieldset>
+        <fieldset class="g-mint" data-group="Abschluss">
+          <legend><span>Abschluss</span></legend>
+          <ul>
+            <li><label for="c11"><input type="checkbox" id="c11"><span>Ort, Datum und Unterschrift am Ende</span></label></li>
+            <li><label for="c12"><input type="checkbox" id="c12"><span>Rechtschreibung, Namen und Zahlen gegengelesen</span></label></li>
+            <li><label for="c13"><input type="checkbox" id="c13"><span>Rechtzeitig an alle Beteiligten verteilt</span></label></li>
+          </ul>
+        </fieldset>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" id="dl" hidden>Checkliste herunterladen</button>
+      <button type="button" id="copy" class="ghost">Text kopieren</button>
+    </div>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+    <textarea id="plain" aria-label="Checkliste als Text" readonly hidden></textarea>
+    <p class="hint">Dein Stand wird nur in diesem Browser gemerkt. Die Textdatei enthält die Liste so, wie du sie gerade abgehakt hast.</p>
+  </div>
+</section>
+
+<script>
+(function () {
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.check input'));
+  var count = document.getElementById('count');
+  var bar = document.getElementById('bar');
+  var stamp = document.getElementById('stamp');
+  var status = document.getElementById('status');
+  var plain = document.getElementById('plain');
+  var dlBtn = document.getElementById('dl');
+  var copyBtn = document.getElementById('copy');
+  var KEY = 'protokolle-berichte-checkliste';
+  var wasDone = false;
+
+  try {
+    var saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+    boxes.forEach(function (b) { if (saved.indexOf(b.id) > -1) b.checked = true; });
+  } catch (e) {}
+
+  function update(animate) {
+    var done = boxes.filter(function (b) { return b.checked; });
+    count.textContent = done.length + ' von ' + boxes.length + ' erledigt';
+    bar.style.width = (done.length / boxes.length * 100) + '%';
+    var all = done.length === boxes.length;
+    stamp.setAttribute('data-done', all ? 'true' : 'false');
+    stamp.textContent = all ? 'Geprüft' : 'Offen';
+    if (all && !wasDone && animate) {
+      stamp.classList.remove('pop');
+      void stamp.offsetWidth;
+      stamp.classList.add('pop');
+    }
+    wasDone = all;
+    try { localStorage.setItem(KEY, JSON.stringify(done.map(function (b) { return b.id; }))); } catch (e) {}
+  }
+  boxes.forEach(function (b) { b.addEventListener('change', function () { update(true); }); });
+  update(false);
+
+  function buildText() {
+    var lines = ['CHECKLISTE: PROTOKOLL UND BERICHT SCHREIBEN', ''];
+    document.querySelectorAll('.check fieldset').forEach(function (fs) {
+      lines.push(fs.getAttribute('data-group').toUpperCase());
+      fs.querySelectorAll('li').forEach(function (li) {
+        var cb = li.querySelector('input');
+        lines.push((cb.checked ? '[x] ' : '[ ] ') + li.querySelector('span').textContent);
+      });
+      lines.push('');
+    });
+    lines.push('Handout zur Präsentation über die Erstellung von Protokollen und Berichten, von Frida und Nissrine');
+    return lines.join('\n');
+  }
+
+  copyBtn.addEventListener('click', function () {
+    var text = buildText();
+    function fallback() {
+      plain.hidden = false;
+      plain.value = text;
+      plain.focus();
+      plain.select();
+      status.textContent = 'Kopieren war nicht möglich. Der Text ist unten markiert, kopiere ihn von dort.';
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        plain.hidden = true;
+        status.textContent = 'Text kopiert.';
+      }, fallback);
+    } else {
+      fallback();
+    }
+  });
+
+  var downloads = null;
+  if (window.claude && window.claude.use) {
+    window.claude.use('downloads').then(function (d) {
+      downloads = d;
+      if (d) { dlBtn.hidden = false; }
+    }, function () {});
+  }
+
+  dlBtn.addEventListener('click', function () {
+    if (!downloads) { return; }
+    status.textContent = '';
+    downloads.save({ filename: 'checkliste-protokoll-bericht.txt', data: buildText() }).then(function () {
+      status.textContent = 'Gespeichert.';
+    }, function (err) {
+      var code = err && err.code;
+      if (code === 'declined') {
+        status.textContent = 'Speichern abgebrochen.';
+      } else if (code === 'rate_limited') {
+        status.textContent = 'Einen Moment bitte, dann noch einmal tippen.';
+      } else {
+        dlBtn.hidden = true;
+        status.textContent = 'Herunterladen geht hier nicht. Nutze „Text kopieren“.';
+      }
+    });
+  });
+})();
+
+(function () {
+  var deck = document.getElementById('deck');
+  var count = document.getElementById('slidecount');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  if (!deck) { return; }
+  var total = deck.children.length;
+  function index() { return Math.round(deck.scrollLeft / deck.clientWidth); }
+  function show() { count.textContent = (index() + 1) + ' von ' + total; }
+  function go(step) {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var target = Math.max(0, Math.min(total - 1, index() + step));
+    deck.scrollTo({ left: target * deck.clientWidth, behavior: reduce ? 'auto' : 'smooth' });
+  }
+  prev.addEventListener('click', function () { go(-1); });
+  next.addEventListener('click', function () { go(1); });
+  deck.addEventListener('scroll', show, { passive: true });
+  deck.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+  });
+  show();
+})();
+</script>
+
+</body>
+</html>
