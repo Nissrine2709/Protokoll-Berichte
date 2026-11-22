@@ -778,352 +778,58 @@ fieldset ul { clear: both; list-style: none; margin: 0; padding: 0 8px; }
 </script>
 
 <style>
-
-<style>
 #schreibbot-toggle {
-  position:fixed; bottom:20px; right:20px; z-index:9999;
-  background:#315b75; color:white; border:0;
-  border-radius:30px; padding:15px 21px;
-  font-size:16px; cursor:pointer;
-  box-shadow:0 4px 15px #0003;
-}
-#schreibbot {
-  display:none; position:fixed; bottom:85px; right:20px;
-  width:350px; max-width:calc(100vw - 30px);
-  height:520px; max-height:75vh; z-index:9999;
-  background:white; border:1px solid #ccd6df;
-  border-radius:17px; overflow:hidden;
-  box-shadow:0 5px 25px #0003;
-  font-family:Arial,sans-serif;
-}
-#schreibbot.aktiv {display:flex;flex-direction:column}
-.bot-kopf {
-  background:#315b75;color:white;padding:15px;
-  display:flex;justify-content:space-between;
-  align-items:center;
-}
-.bot-kopf small {display:block;font-weight:normal;margin-top:4px}
-#bot-schliessen {
-  background:none;border:0;color:white;
-  font-size:24px;cursor:pointer;
-}
-#bot-nachrichten {
-  flex:1;overflow-y:auto;padding:13px;
-  background:#f5f8fa;
-}
-.bot-nachricht {
-  padding:11px 13px;border-radius:13px;
-  margin-bottom:10px;max-width:90%;
-  font-size:14px;line-height:1.55;
-  white-space:pre-wrap;overflow-wrap:anywhere;
-}
-.bot {background:#e3edf3;color:#172b38}
-.user {background:#315b75;color:white;margin-left:auto}
-.bot-vorschlaege {
-  display:flex;gap:6px;flex-wrap:wrap;
-  padding:9px;background:white;
-  border-top:1px solid #eee;
-}
-.bot-vorschlaege button {
-  border:1px solid #ccd6df;background:#edf3f6;
-  border-radius:20px;padding:7px 10px;
-  cursor:pointer;font-size:12px;
-}
-#bot-form {
-  display:flex;gap:7px;padding:10px;
-  background:white;border-top:1px solid #ddd;
-}
-#bot-eingabe {
-  flex:1;min-width:0;padding:11px;
-  border:1px solid #bbb;border-radius:9px;
-  font-size:14px;
-}
-#bot-senden {
-  background:#315b75;color:white;border:0;
-  border-radius:9px;padding:10px 13px;
-  cursor:pointer;
-}
-.bot-hinweis {
-  font-size:10px;color:#777;text-align:center;
-  padding:5px;background:white;
-}
-</style>
-
-<button id="schreibbot-toggle" type="button">💬 Schreib-Hilfe</button>
-
-<div id="schreibbot">
-  <div class="bot-kopf">
-    <div>
-      📚 Dein Schreib-Assistent
-      <small>Deine Hilfe für Protokolle und Berichte</small>
-    </div>
-    <button id="bot-schliessen" type="button">×</button>
-  </div>
-
-  <div id="bot-nachrichten">
-    <div class="bot-nachricht bot">Hallo! 👋 Schön, dass du da bist!
-
-Ich bin dein digitaler Schreib-Assistent. Ich helfe dir beim Verstehen, Schreiben und Verbessern von Protokollen und Berichten.
-
-Du kannst mir Fragen stellen, Beispiele anfordern oder mit mir üben. 😊
-
-Womit möchtest du anfangen?</div>
-  </div>
-
-  <div class="bot-vorschlaege">
-    <button type="button" data-frage="Was ist ein Protokoll?">📄 Protokoll</button>
-    <button type="button" data-frage="Was ist ein Bericht?">📝 Bericht</button>
-    <button type="button" data-frage="Wie ist ein Protokoll aufgebaut?">🏗️ Aufbau</button>
-    <button type="button" data-frage="Zeige mir ein Beispiel für ein Protokoll.">📚 Beispiel</button>
-    <button type="button" data-frage="Quiz">🎯 Quiz</button>
-    <button type="button" data-frage="Gib mir Schreibtipps.">💡 Schreibtipps</button>
-  </div>
-
-  <form id="bot-form">
-    <input id="bot-eingabe" type="text"
-      placeholder="Stelle deine Frage ..."
-      autocomplete="off">
-    <button id="bot-senden" type="submit">Senden</button>
-  </form>
-
-  <div class="bot-hinweis">
-    Automatische Lernhilfe · Keine KI-Verbindung
-  </div>
-</div>
-
-<script>
-(function () {
-  const toggle=document.getElementById("schreibbot-toggle");
-  const fenster=document.getElementById("schreibbot");
-  const schliessen=document.getElementById("bot-schliessen");
-  const form=document.getElementById("bot-form");
-  const eingabe=document.getElementById("bot-eingabe");
-  const nachrichten=document.getElementById("bot-nachrichten");
-
-  if(!toggle || !fenster || !form || !eingabe || !nachrichten) return;
-
-  let quizAktiv=false;
-  let quizFrage=0;
-  let punkte=0;
-
-  const quiz=[
-    {
-      frage:"Frage 1: Welche Sprache sollte man in einem Protokoll verwenden?",
-      antwort:["sachlich","neutral","objektiv"],
-      richtig:"Richtig! 🎉 Ein Protokoll wird sachlich und neutral geschrieben."
-    },
-    {
-      frage:"Frage 2: Welche W-Frage fragt nach dem Ort?",
-      antwort:["wo"],
-      richtig:"Super! 🎉 Die Frage „Wo?“ fragt nach dem Ort."
-    },
-    {
-      frage:"Frage 3: Was enthält ein Ergebnisprotokoll hauptsächlich?",
-      antwort:["ergebnisse","beschlüsse"],
-      richtig:"Richtig! 🎉 Es enthält vor allem Ergebnisse und Beschlüsse."
-    }
-  ];
-
-  function nachricht(text,klasse){
-    const element=document.createElement("div");
-    element.className="bot-nachricht "+klasse;
-    element.textContent=text;
-    nachrichten.appendChild(element);
-    nachrichten.scrollTop=nachrichten.scrollHeight;
-  }
-
-  function antwort(frage){
-    const f=frage.toLowerCase();
-
-    if(f==="quiz" || f.includes("quiz starten")){
-      quizAktiv=true;
-      quizFrage=0;
-      punkte=0;
-      return quiz[0].frage;
-    }
-
-    if(quizAktiv){
-      const q=quiz[quizFrage];
-      if(q.antwort.some(a=>f.includes(a))){
-        punkte++;
-        nachricht(q.richtig,"bot");
-      }else{
-        nachricht("Noch nicht ganz! Die richtige Antwort wäre: "+q.antwort[0]+".","bot");
-      }
-      quizFrage++;
-      if(quizFrage<quiz.length){
-        return quiz[quizFrage].frage;
-      }
-      quizAktiv=false;
-      return "🎉 Das Quiz ist beendet! Du hast "+punkte+" von "+quiz.length+" Punkten erreicht. Schreibe „Quiz“, wenn du noch einmal üben möchtest.";
-    }
-
-    if(f.includes("unterschied") || (f.includes("protokoll") && f.includes("bericht"))){
-      return "Ein Protokoll dokumentiert eine Besprechung oder Veranstaltung. Ein Bericht informiert über ein bestimmtes Ereignis. Beide Textsorten sollen sachlich und verständlich sein.\n\nDer Unterschied: Ein Protokoll hält oft Beiträge, Ergebnisse und Beschlüsse fest. Ein Bericht beschreibt ein Ereignis zusammenhängend.";
-    }
-
-    if(f.includes("ergebnisprotokoll")){
-      return "📌 ERGEBNISPROTOKOLL\n\nEin Ergebnisprotokoll hält die wichtigsten Ergebnisse, Beschlüsse und Aufgaben einer Besprechung fest.\n\nMerkmale:\n• Keine ausführliche Wiedergabe jedes Gesprächs\n• Beschlüsse stehen im Mittelpunkt\n• Sachliche und knappe Formulierungen\n\nBeispiel: „Die Gruppe beschloss, die Präsentation bis Freitag fertigzustellen.“";
-    }
-
-    if(f.includes("verlaufsprotokoll")){
-      return "📌 VERLAUFSPROTOKOLL\n\nEin Verlaufsprotokoll dokumentiert die wichtigsten Beiträge und den Ablauf einer Besprechung in zeitlicher Reihenfolge.\n\nMerkmale:\n• Reihenfolge des Gesprächs\n• Wichtige Argumente und Beiträge\n• Ergebnisse und Beschlüsse\n\nEs zeigt also, wie die Besprechung abgelaufen ist.";
-    }
-
-    if(f.includes("kurzprotokoll")){
-      return "📌 KURZPROTOKOLL\n\nEin Kurzprotokoll fasst die wichtigsten Informationen einer Besprechung knapp zusammen. Es konzentriert sich auf die wesentlichen Punkte und verzichtet auf ausführliche Einzelheiten.";
-    }
-
-    if(f.includes("aufbau") || f.includes("gliederung") || f.includes("struktur")){
-      return "🏗️ AUFBAU EINES PROTOKOLLS\n\n1. Kopf:\n• Datum und Uhrzeit\n• Ort\n• Thema\n• Teilnehmende\n• Protokollführung\n\n2. Hauptteil:\n• Besprochene Themen\n• Wichtige Beiträge\n• Ergebnisse und Beschlüsse\n\n3. Schluss:\n• Aufgaben und Verantwortliche\n• Nächste Termine\n• Unterschrift";
-    }
-
-    if(f.includes("w-frage") || f.includes("w fragen") || f.includes("w-fragen")){
-      return "❓ DIE W-FRAGEN\n\n• Wer? – Beteiligte Personen\n• Was? – Ereignis oder Thema\n• Wann? – Zeitpunkt\n• Wo? – Ort\n• Wie? – Ablauf\n• Warum? – Grund\n\nTipp: Beantworte die passenden W-Fragen, damit keine wichtigen Informationen fehlen.";
-    }
-
-    if(f.includes("sachlich") || f.includes("objektiv") || f.includes("neutral")){
-      return "✍️ SACHLICH SCHREIBEN\n\nSchreibe ohne persönliche Meinung, Übertreibungen oder Gefühle.\n\n❌ „Die Besprechung war total langweilig.“\n\n✅ „Die Besprechung dauerte 45 Minuten.“\n\nBeschreibe Fakten statt deiner persönlichen Eindrücke.";
-    }
-
-    if(f.includes("zeitform") || f.includes("präteritum") || f.includes("vergangenheit")){
-      return "⏰ ZEITFORMEN\n\nBerichte und Protokolle werden häufig in der Vergangenheit geschrieben.\n\nBeispiel im Präteritum:\n„Die Gruppe besprach das Thema.“\n\nAchte darauf, die Zeitform möglichst einheitlich zu verwenden.";
-    }
-
-    if(f.includes("beispiel") && f.includes("bericht")){
-      return "📝 BEISPIEL FÜR EINEN BERICHT\n\nAm Montagmorgen fand in der Schule ein Projekttag statt. Die Schülerinnen und Schüler arbeiteten in verschiedenen Gruppen an ihren Aufgaben. Anschließend stellten sie ihre Ergebnisse vor. Der Projekttag endete um 13 Uhr.";
-    }
-
-    if(f.includes("beispiel")){
-      return "📄 BEISPIEL FÜR EIN PROTOKOLL\n\nThema: Planung eines Schulfestes\nDatum: 12. März 2026\nOrt: Klassenraum\n\nDie Klasse besprach die Planung des Schulfestes. Es wurde beschlossen, verschiedene Spielstationen aufzubauen. Zwei Gruppen übernehmen die Dekoration und die Organisation der Spiele.\n\nErgebnis: Die Aufgaben werden bis Freitag verteilt.";
-    }
-
-    if(f.includes("einleitung") || f.includes("hauptteil") || f.includes("schluss")){
-      return "Einleitung: Nenne Thema, Datum, Ort und Beteiligte.\n\nHauptteil: Beschreibe die wichtigsten Ereignisse, Beiträge und Ergebnisse.\n\nSchluss: Halte Beschlüsse, Aufgaben und weitere Termine fest.";
-    }
-
-    if(f.includes("checkliste") || f.includes("kontrollieren")){
-      return "✅ DEINE CHECKLISTE\n\n☐ Sind Datum und Thema angegeben?\n☐ Sind die wichtigen Informationen enthalten?\n☐ Sind die W-Fragen beantwortet?\n☐ Ist der Text sachlich geschrieben?\n☐ Ist der Text logisch aufgebaut?\n☐ Stimmen Rechtschreibung und Satzzeichen?\n\nGehe die Punkte vor der Abgabe einzeln durch!";
-    }
-
-    if(f.includes("schreibtipp") || f.includes("tipps")){
-      return "💡 5 SCHREIBTIPPS\n\n1. Sammle zuerst alle wichtigen Informationen.\n2. Ordne deine Gedanken nach Themen.\n3. Schreibe kurze und verständliche Sätze.\n4. Bleibe sachlich und neutral.\n5. Lies deinen Text am Ende sorgfältig durch.";
-    }
-
-    if(f.includes("fehler")){
-      return "⚠️ HÄUFIGE FEHLER\n\n• Persönliche Meinungen einbauen\n• Wichtige Informationen vergessen\n• Unklare Reihenfolge\n• Umgangssprache verwenden\n• Zu lange und komplizierte Sätze\n• Rechtschreibung nicht kontrollieren\n\nTipp: Lies deinen Text am Ende noch einmal aus Sicht einer anderen Person.";
-    }
-
-    if(f.includes("bericht")){
-      return "📝 WAS IST EIN BERICHT?\n\nEin Bericht informiert sachlich über ein Ereignis. Er beantwortet die wichtigsten W-Fragen und beschreibt den Ablauf verständlich.\n\nTypischer Aufbau:\n1. Einleitung: Wer? Was? Wann? Wo?\n2. Hauptteil: Wie? Warum?\n3. Schluss: Ergebnis oder Folgen des Ereignisses.";
-    }
-
-    if(f.includes("protokoll")){
-      return "📄 WAS IST EIN PROTOKOLL?\n\nEin Protokoll ist eine schriftliche Aufzeichnung einer Besprechung oder Veranstaltung. Es hält wichtige Informationen, Beiträge, Ergebnisse und Beschlüsse fest.\n\nEs soll sachlich, übersichtlich und verständlich sein.";
-    }
-
-    if(f.includes("hallo") || f.includes("hi") || f.includes("hey")){
-      return "Hallo! 😊 Schön, dass du da bist. Frag mich etwas über Protokolle und Berichte oder starte ein Quiz!";
-    }
-
-    if(f.includes("danke")){
-      return "Sehr gerne! ❤️ Viel Erfolg beim Schreiben!";
-    }
-
-    if(f.includes("hilfe")){
-      return "Ich kann dir helfen bei:\n\n📄 Protokollarten\n📝 Berichten\n🏗️ Aufbau und Gliederung\n❓ W-Fragen\n✍️ Sachlicher Sprache\n⏰ Zeitformen\n📚 Beispielen\n✅ Checklisten\n🎯 Quizfragen\n\nSchreib einfach ein Thema in das Eingabefeld!";
-    }
-
-    return "Das habe ich leider nicht ganz verstanden. 🤔\n\nDu kannst mich zum Beispiel fragen:\n• Was ist ein Ergebnisprotokoll?\n• Wie ist ein Bericht aufgebaut?\n• Wie schreibe ich sachlich?\n• Zeige mir ein Beispiel.\n• Starte ein Quiz!";
-  }
-
-  function frageSenden(frage){
-    frage=frage.trim();
-    if(!frage)return;
-    nachricht(frage,"user");
-    nachricht(antwort(frage),"bot");
-    eingabe.value="";
-  }
-
-  toggle.addEventListener("click",function(){
-    fenster.classList.toggle("aktiv");
-    if(fenster.classList.contains("aktiv"))eingabe.focus();
-  });
-
-  schliessen.addEventListener("click",function(){
-    fenster.classList.remove("aktiv");
-  });
-
-  form.addEventListener("submit",function(event){
-    event.preventDefault();
-    frageSenden(eingabe.value);
-  });
-
-  document.querySelectorAll("#schreibbot .bot-vorschlaege button").forEach(function(button){
-    button.addEventListener("click",function(){
-      frageSenden(button.dataset.frage);
-    });
-  });
-})();
-</script>
-
-<style>
-#schreibbot-toggle {
-  position: fixed !important;
-  bottom: 20px !important;
-  right: 20px !important;
-  z-index: 99999 !important;
-  background: #315b75;
-  color: white;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 999999;
   border: 0;
   border-radius: 30px;
-  padding: 15px 21px;
+  padding: 15px 20px;
+  background: #2457a7;
+  color: white;
   font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 4px 15px #0003;
+  box-shadow: 0 4px 14px #0003;
 }
 
 #schreibbot {
   display: none;
-  position: fixed !important;
-  bottom: 85px !important;
-  right: 20px !important;
-  width: 350px;
-  max-width: calc(100vw - 30px);
-  height: 520px;
-  max-height: 75vh;
-  z-index: 99998 !important;
+  position: fixed;
+  right: 20px;
+  bottom: 85px;
+  z-index: 999998;
+  width: min(360px, calc(100vw - 30px));
+  height: 480px;
+  max-height: calc(100vh - 115px);
   background: white;
-  border: 1px solid #ccd6df;
-  border-radius: 17px;
+  border: 1px solid #d5ddeb;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px #0003;
   overflow: hidden;
-  box-shadow: 0 5px 25px #0003;
+  flex-direction: column;
   font-family: Arial, sans-serif;
+  color: #243047;
 }
 
 #schreibbot.aktiv {
   display: flex;
-  flex-direction: column;
 }
 
-.bot-kopf {
-  background: #315b75;
+#schreibbot-kopf {
+  background: #2457a7;
   color: white;
   padding: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-weight: bold;
 }
 
-.bot-kopf small {
-  display: block;
-  font-weight: normal;
-  margin-top: 4px;
-}
-
-#bot-schliessen {
-  background: none;
+#schreibbot-schliessen {
   border: 0;
+  background: transparent;
   color: white;
   font-size: 24px;
   cursor: pointer;
@@ -1132,46 +838,40 @@ Womit möchtest du anfangen?</div>
 #bot-nachrichten {
   flex: 1;
   overflow-y: auto;
-  padding: 13px;
-  background: #f5f8fa;
+  padding: 12px;
+  background: #f5f7fb;
 }
 
 .bot-nachricht {
-  padding: 11px 13px;
-  border-radius: 13px;
-  margin-bottom: 10px;
-  max-width: 90%;
+  padding: 10px 12px;
+  margin: 8px 0;
+  border-radius: 12px;
+  background: white;
+  line-height: 1.5;
   font-size: 14px;
-  line-height: 1.55;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 
-.bot {
-  background: #e3edf3;
-  color: #172b38;
-}
-
-.user {
-  background: #315b75;
-  color: white;
-  margin-left: auto;
+.bot-nachricht.nutzer {
+  background: #dce9ff;
+  margin-left: 25px;
 }
 
 .bot-vorschlaege {
+  padding: 8px;
   display: flex;
-  gap: 6px;
   flex-wrap: wrap;
-  padding: 9px;
-  background: white;
-  border-top: 1px solid #eee;
+  gap: 6px;
+  border-top: 1px solid #e5e8ef;
 }
 
 .bot-vorschlaege button {
-  border: 1px solid #ccd6df;
-  background: #edf3f6;
-  border-radius: 20px;
+  border: 1px solid #b8c9e5;
+  border-radius: 18px;
   padding: 7px 10px;
+  background: #f3f7ff;
+  color: #2457a7;
   cursor: pointer;
   font-size: 12px;
 }
@@ -1180,667 +880,205 @@ Womit möchtest du anfangen?</div>
   display: flex;
   gap: 7px;
   padding: 10px;
-  background: white;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #e5e8ef;
 }
 
 #bot-eingabe {
   flex: 1;
   min-width: 0;
   padding: 11px;
-  border: 1px solid #bbb;
+  border: 1px solid #cbd3df;
   border-radius: 9px;
   font-size: 14px;
 }
 
 #bot-senden {
-  background: #315b75;
-  color: white;
   border: 0;
   border-radius: 9px;
-  padding: 10px 13px;
+  padding: 0 14px;
+  background: #2457a7;
+  color: white;
   cursor: pointer;
 }
 
 .bot-hinweis {
-  font-size: 10px;
-  color: #777;
+  font-size: 11px;
+  color: #68758a;
   text-align: center;
   padding: 5px;
-  background: white;
 }
 </style>
 
-<button id="schreibbot-toggle" type="button">
-  💬 Schreib-Hilfe
-</button>
+<button id="schreibbot-toggle" type="button">💬 Schreib-Bot</button>
 
 <div id="schreibbot">
-
-  <div class="bot-kopf">
-    <div>
-      📚 Dein Schreib-Assistent
-      <small>Deine Hilfe für Protokolle und Berichte</small>
-    </div>
-    <button id="bot-schliessen" type="button">×</button>
+  <div id="schreibbot-kopf">
+    <span>Dein Schreib-Bot</span>
+    <button id="schreibbot-schliessen" type="button" aria-label="Chat schließen">×</button>
   </div>
 
-  <div id="bot-nachrichten">
-    <div class="bot-nachricht bot">Hallo! 👋 Schön, dass du da bist!
+  <div id="bot-nachrichten" aria-live="polite">
+    <div class="bot-nachricht">
+      Hallo! 👋 Ich helfe dir beim Schreiben von Protokollen und Berichten.
 
-Ich bin dein digitaler Schreib-Assistent. Ich helfe dir beim Verstehen, Schreiben und Verbessern von Protokollen und Berichten.
-
-Du kannst mir Fragen stellen, Beispiele anfordern oder mit mir üben. 😊
-
-Womit möchtest du anfangen?</div>
+      Du kannst eine Frage stellen oder unten ein Thema auswählen.
+    </div>
   </div>
 
   <div class="bot-vorschlaege">
-    <button type="button" data-frage="Was ist ein Protokoll?">📄 Protokoll</button>
-    <button type="button" data-frage="Was ist ein Bericht?">📝 Bericht</button>
-    <button type="button" data-frage="Wie ist ein Protokoll aufgebaut?">🏗️ Aufbau</button>
-    <button type="button" data-frage="Zeige mir ein Beispiel für ein Protokoll.">📚 Beispiel</button>
-    <button type="button" data-frage="Quiz">🎯 Quiz</button>
-    <button type="button" data-frage="Gib mir Schreibtipps.">💡 Schreibtipps</button>
+    <button type="button" data-frage="Was ist ein Protokoll?">Was ist ein Protokoll?</button>
+    <button type="button" data-frage="Was ist ein Bericht?">Was ist ein Bericht?</button>
+    <button type="button" data-frage="Wie ist ein Protokoll aufgebaut?">Aufbau</button>
+    <button type="button" data-frage="Gib mir eine Checkliste.">Checkliste</button>
+    <button type="button" data-frage="Gib mir ein Beispiel.">Beispiel</button>
+    <button type="button" data-frage="Quiz">Quiz</button>
   </div>
 
   <form id="bot-form">
-    <input id="bot-eingabe" type="text"
-      placeholder="Stelle deine Frage ..."
-      autocomplete="off">
+    <input id="bot-eingabe" type="text" placeholder="Schreibe deine Frage ..." autocomplete="off">
     <button id="bot-senden" type="submit">Senden</button>
   </form>
-
-  <div class="bot-hinweis">
-    Automatische Lernhilfe · Keine KI-Verbindung
-  </div>
+  <div class="bot-hinweis">Automatische Antworten zu Protokollen und Berichten</div>
 </div>
 
 <script>
 (function () {
   const toggle = document.getElementById("schreibbot-toggle");
   const fenster = document.getElementById("schreibbot");
-  const schliessen = document.getElementById("bot-schliessen");
+  const schliessen = document.getElementById("schreibbot-schliessen");
+  const nachrichten = document.getElementById("bot-nachrichten");
   const form = document.getElementById("bot-form");
   const eingabe = document.getElementById("bot-eingabe");
-  const nachrichten = document.getElementById("bot-nachrichten");
 
-  if (!toggle || !fenster || !form || !eingabe || !nachrichten) return;
-
-  let quizAktiv = false;
-  let quizFrage = 0;
-  let punkte = 0;
-
-  const quiz = [
-    {
-      frage: "Frage 1: Welche Sprache sollte man in einem Protokoll verwenden?",
-      antwort: ["sachlich", "neutral", "objektiv"],
-      richtig: "Richtig! 🎉 Ein Protokoll wird sachlich und neutral geschrieben."
-    },
-    {
-      frage: "Frage 2: Welche W-Frage fragt nach dem Ort?",
-      antwort: ["wo"],
-      richtig: "Super! 🎉 Die Frage „Wo?“ fragt nach dem Ort."
-    },
-    {
-      frage: "Frage 3: Was enthält ein Ergebnisprotokoll hauptsächlich?",
-      antwort: ["ergebnisse", "beschlüsse"],
-      richtig: "Richtig! 🎉 Es enthält vor allem Ergebnisse und Beschlüsse."
-    }
-  ];
-
-  function nachricht(text, klasse) {
-    const element = document.createElement("div");
-    element.className = "bot-nachricht " + klasse;
-    element.textContent = text;
-    nachrichten.appendChild(element);
-    nachrichten.scrollTop = nachrichten.scrollHeight;
-  }
-
-  function antwort(frage) {
-    const f = frage.toLowerCase();
-
-    if (f === "quiz" || f.includes("quiz starten")) {
-      quizAktiv = true;
-      quizFrage = 0;
-      punkte = 0;
-      return quiz[0].frage;
-    }
-
-    if (quizAktiv) {
-      const q = quiz[quizFrage];
-
-      if (q.antwort.some(a => f.includes(a))) {
-        punkte++;
-        nachricht(q.richtig, "bot");
-      } else {
-        nachricht(
-          "Noch nicht ganz! Die richtige Antwort wäre: " +
-          q.antwort[0] + ".", "bot"
-        );
-      }
-
-      quizFrage++;
-
-      if (quizFrage < quiz.length) {
-        return quiz[quizFrage].frage;
-      }
-
-      quizAktiv = false;
-      return "🎉 Das Quiz ist beendet! Du hast " +
-        punkte + " von " + quiz.length +
-        " Punkten erreicht. Schreibe „Quiz“, wenn du noch einmal üben möchtest.";
-    }
-
-    if (f.includes("unterschied") ||
-       (f.includes("protokoll") && f.includes("bericht"))) {
-      return "Ein Protokoll dokumentiert eine Besprechung oder Veranstaltung. Ein Bericht informiert über ein bestimmtes Ereignis. Beide Textsorten sollen sachlich und verständlich sein.\n\nDer Unterschied: Ein Protokoll hält oft Beiträge, Ergebnisse und Beschlüsse fest. Ein Bericht beschreibt ein Ereignis zusammenhängend.";
-    }
-
-    if (f.includes("ergebnisprotokoll")) {
-      return "📌 ERGEBNISPROTOKOLL\n\nEin Ergebnisprotokoll hält die wichtigsten Ergebnisse, Beschlüsse und Aufgaben einer Besprechung fest.\n\nMerkmale:\n• Keine ausführliche Wiedergabe jedes Gesprächs\n• Beschlüsse stehen im Mittelpunkt\n• Sachliche und knappe Formulierungen\n\nBeispiel: „Die Gruppe beschloss, die Präsentation bis Freitag fertigzustellen.“";
-    }
-
-    if (f.includes("verlaufsprotokoll")) {
-      return "📌 VERLAUFSPROTOKOLL\n\nEin Verlaufsprotokoll dokumentiert die wichtigsten Beiträge und den Ablauf einer Besprechung in zeitlicher Reihenfolge.\n\nMerkmale:\n• Reihenfolge des Gesprächs\n• Wichtige Argumente und Beiträge\n• Ergebnisse und Beschlüsse";
-    }
-
-    if (f.includes("kurzprotokoll")) {
-      return "📌 KURZPROTOKOLL\n\nEin Kurzprotokoll fasst die wichtigsten Informationen einer Besprechung knapp zusammen. Es konzentriert sich auf die wesentlichen Punkte und verzichtet auf ausführliche Einzelheiten.";
-    }
-
-    if (f.includes("aufbau") || f.includes("gliederung") || f.includes("struktur")) {
-      return "🏗️ AUFBAU EINES PROTOKOLLS\n\n1. Kopf:\n• Datum und Uhrzeit\n• Ort\n• Thema\n• Teilnehmende\n• Protokollführung\n\n2. Hauptteil:\n• Besprochene Themen\n• Wichtige Beiträge\n• Ergebnisse und Beschlüsse\n\n3. Schluss:\n• Aufgaben und Verantwortliche\n• Nächste Termine\n• Unterschrift";
-    }
-
-    if (f.includes("w-frage") || f.includes("w fragen") || f.includes("w-fragen")) {
-      return "❓ DIE W-FRAGEN\n\n• Wer? – Beteiligte Personen\n• Was? – Ereignis oder Thema\n• Wann? – Zeitpunkt\n• Wo? – Ort\n• Wie? – Ablauf\n• Warum? – Grund\n\nTipp: Beantworte die passenden W-Fragen, damit keine wichtigen Informationen fehlen.";
-    }
-
-    if (f.includes("sachlich") || f.includes("objektiv") || f.includes("neutral")) {
-      return "✍️ SACHLICH SCHREIBEN\n\nSchreibe ohne persönliche Meinung, Übertreibungen oder Gefühle.\n\n❌ „Die Besprechung war total langweilig.“\n\n✅ „Die Besprechung dauerte 45 Minuten.“\n\nBeschreibe Fakten statt deiner persönlichen Eindrücke.";
-    }
-
-    if (f.includes("zeitform") || f.includes("präteritum") || f.includes("vergangenheit")) {
-      return "⏰ ZEITFORMEN\n\nBerichte und Protokolle werden häufig in der Vergangenheit geschrieben.\n\nBeispiel im Präteritum:\n„Die Gruppe besprach das Thema.“\n\nAchte darauf, die Zeitform möglichst einheitlich zu verwenden.";
-    }
-
-    if (f.includes("beispiel") && f.includes("bericht")) {
-      return "📝 BEISPIEL FÜR EINEN BERICHT\n\nAm Montagmorgen fand in der Schule ein Projekttag statt. Die Schülerinnen und Schüler arbeiteten in verschiedenen Gruppen an ihren Aufgaben. Anschließend stellten sie ihre Ergebnisse vor. Der Projekttag endete um 13 Uhr.";
-    }
-
-    if (f.includes("beispiel")) {
-      return "📄 BEISPIEL FÜR EIN PROTOKOLL\n\nThema: Planung eines Schulfestes\nDatum: 12. März 2026\nOrt: Klassenraum\n\nDie Klasse besprach die Planung des Schulfestes. Es wurde beschlossen, verschiedene Spielstationen aufzubauen. Zwei Gruppen übernehmen die Dekoration und die Organisation der Spiele.\n\nErgebnis: Die Aufgaben werden bis Freitag verteilt.";
-    }
-
-    if (f.includes("einleitung") || f.includes("hauptteil") || f.includes("schluss")) {
-      return "Einleitung: Nenne Thema, Datum, Ort und Beteiligte.\n\nHauptteil: Beschreibe die wichtigsten Ereignisse, Beiträge und Ergebnisse.\n\nSchluss: Halte Beschlüsse, Aufgaben und weitere Termine fest.";
-    }
-
-    if (f.includes("checkliste") || f.includes("kontrollieren")) {
-      return "✅ DEINE CHECKLISTE\n\n☐ Sind Datum und Thema angegeben?\n☐ Sind die wichtigen Informationen enthalten?\n☐ Sind die W-Fragen beantwortet?\n☐ Ist der Text sachlich geschrieben?\n☐ Ist der Text logisch aufgebaut?\n☐ Stimmen Rechtschreibung und Satzzeichen?\n\nGehe die Punkte vor der Abgabe einzeln durch!";
-    }
-
-    if (f.includes("schreibtipp") || f.includes("tipps")) {
-      return "💡 5 SCHREIBTIPPS\n\n1. Sammle zuerst alle wichtigen Informationen.\n2. Ordne deine Gedanken nach Themen.\n3. Schreibe kurze und verständliche Sätze.\n4. Bleibe sachlich und neutral.\n5. Lies deinen Text am Ende sorgfältig durch.";
-    }
-
-    if (f.includes("fehler")) {
-      return "⚠️ HÄUFIGE FEHLER\n\n• Persönliche Meinungen einbauen\n• Wichtige Informationen vergessen\n• Unklare Reihenfolge\n• Umgangssprache verwenden\n• Zu lange und komplizierte Sätze\n• Rechtschreibung nicht kontrollieren\n\nTipp: Lies deinen Text am Ende noch einmal aus Sicht einer anderen Person.";
-    }
-
-    if (f.includes("bericht")) {
-      return "📝 WAS IST EIN BERICHT?\n\nEin Bericht informiert sachlich über ein Ereignis. Er beantwortet die wichtigsten W-Fragen und beschreibt den Ablauf verständlich.\n\nTypischer Aufbau:\n1. Einleitung: Wer? Was? Wann? Wo?\n2. Hauptteil: Wie? Warum?\n3. Schluss: Ergebnis oder Folgen des Ereignisses.";
-    }
-
-    if (f.includes("protokoll")) {
-      return "📄 WAS IST EIN PROTOKOLL?\n\nEin Protokoll ist eine schriftliche Aufzeichnung einer Besprechung oder Veranstaltung. Es hält wichtige Informationen, Beiträge, Ergebnisse und Beschlüsse fest.\n\nEs soll sachlich, übersichtlich und verständlich sein.";
-    }
-
-    if (f.includes("hallo") || f.includes("hi") || f.includes("hey")) {
-      return "Hallo! 😊 Schön, dass du da bist. Frag mich etwas über Protokolle und Berichte oder starte ein Quiz!";
-    }
-
-    if (f.includes("danke")) {
-      return "Sehr gerne! ❤️ Viel Erfolg beim Schreiben!";
-    }
-
-    if (f.includes("hilfe")) {
-      return "Ich kann dir helfen bei:\n\n📄 Protokollarten\n📝 Berichten\n🏗️ Aufbau und Gliederung\n❓ W-Fragen\n✍️ Sachlicher Sprache\n⏰ Zeitformen\n📚 Beispielen\n✅ Checklisten\n🎯 Quizfragen\n\nSchreib einfach ein Thema in das Eingabefeld!";
-    }
-
-    return "Das habe ich leider nicht ganz verstanden. 🤔\n\nDu kannst mich zum Beispiel fragen:\n• Was ist ein Ergebnisprotokoll?\n• Wie ist ein Bericht aufgebaut?\n• Wie schreibe ich sachlich?\n• Zeige mir ein Beispiel.\n• Starte ein Quiz!";
-  }
-
-  function frageSenden(frage) {
-    frage = frage.trim();
-    if (!frage) return;
-
-    nachricht(frage, "user");
-    nachricht(antwort(frage), "bot");
-    eingabe.value = "";
-  }
-
-  toggle.addEventListener("click", function () {
-    fenster.classList.toggle("aktiv");
-    if (fenster.classList.contains("aktiv")) {
-      eingabe.focus();
-    }
-  });
-
-  schliessen.addEventListener("click", function () {
-    fenster.classList.remove("aktiv");
-  });
-
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
-    frageSenden(eingabe.value);
-  });
-
-  fenster.querySelectorAll(".bot-vorschlaege button").forEach(function (button) {
-    button.addEventListener("click", function () {
-      frageSenden(button.dataset.frage);
-    });
-  });
-})();
-</script>
-
-<style>
-#schreibbot-toggle {
-  position: fixed !important;
-  right: 20px !important;
-  bottom: 20px !important;
-  z-index: 999999 !important;
-  background: #315b75;
-  color: white;
-  border: none;
-  border-radius: 30px;
-  padding: 15px 21px;
-  font-size: 16px;
-  cursor: pointer;
-  box-shadow: 0 4px 15px #0003;
-}
-
-#schreibbot {
-  display: none;
-  position: fixed !important;
-  right: 20px !important;
-  bottom: 85px !important;
-  z-index: 999998 !important;
-  width: 350px;
-  max-width: calc(100vw - 30px);
-  height: 520px;
-  max-height: 75vh;
-  background: white;
-  border: 1px solid #ccd6df;
-  border-radius: 17px;
-  overflow: hidden;
-  box-shadow: 0 5px 25px #0003;
-  font-family: Arial, sans-serif;
-}
-
-#schreibbot.aktiv {
-  display: flex !important;
-  flex-direction: column;
-}
-
-.bot-kopf {
-  background: #315b75;
-  color: white;
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.bot-kopf small {
-  display: block;
-  font-weight: normal;
-  margin-top: 4px;
-}
-
-#bot-schliessen {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 25px;
-  cursor: pointer;
-}
-
-#bot-nachrichten {
-  flex: 1;
-  overflow-y: auto;
-  padding: 13px;
-  background: #f5f8fa;
-}
-
-.bot-nachricht {
-  padding: 11px 13px;
-  border-radius: 13px;
-  margin-bottom: 10px;
-  max-width: 90%;
-  font-size: 14px;
-  line-height: 1.55;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.bot {
-  background: #e3edf3;
-  color: #172b38;
-}
-
-.user {
-  background: #315b75;
-  color: white;
-  margin-left: auto;
-}
-
-.bot-vorschlaege {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  padding: 9px;
-  background: white;
-  border-top: 1px solid #eee;
-}
-
-.bot-vorschlaege button {
-  border: 1px solid #ccd6df;
-  background: #edf3f6;
-  border-radius: 20px;
-  padding: 7px 10px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-#bot-form {
-  display: flex;
-  gap: 7px;
-  padding: 10px;
-  background: white;
-  border-top: 1px solid #ddd;
-}
-
-#bot-eingabe {
-  flex: 1;
-  min-width: 0;
-  padding: 11px;
-  border: 1px solid #bbb;
-  border-radius: 9px;
-  font-size: 14px;
-}
-
-#bot-senden {
-  background: #315b75;
-  color: white;
-  border: none;
-  border-radius: 9px;
-  padding: 10px 13px;
-  cursor: pointer;
-}
-
-.bot-hinweis {
-  font-size: 10px;
-  color: #777;
-  text-align: center;
-  padding: 5px;
-  background: white;
-}
-</style>
-
-<button id="schreibbot-toggle" type="button">
-  💬 Schreib-Hilfe
-</button>
-
-<div id="schreibbot">
-
-  <div class="bot-kopf">
-    <div>
-      📚 Dein Schreib-Assistent
-      <small>Deine Hilfe für Protokolle und Berichte</small>
-    </div>
-    <button id="bot-schliessen" type="button">×</button>
-  </div>
-
-  <div id="bot-nachrichten">
-    <div class="bot-nachricht bot">Hallo! 👋 Schön, dass du da bist!
-
-Ich bin dein digitaler Schreib-Assistent.
-
-Ich helfe dir beim Verstehen und Schreiben von Protokollen und Berichten.
-
-Du kannst mir Fragen stellen, Beispiele anfordern oder mit mir üben. 😊
-
-Womit möchtest du anfangen?</div>
-  </div>
-
-  <div class="bot-vorschlaege">
-    <button type="button" data-frage="Was ist ein Protokoll?">📄 Protokoll</button>
-    <button type="button" data-frage="Was ist ein Bericht?">📝 Bericht</button>
-    <button type="button" data-frage="Wie ist ein Protokoll aufgebaut?">🏗️ Aufbau</button>
-    <button type="button" data-frage="Zeige mir ein Beispiel für ein Protokoll.">📚 Beispiel</button>
-    <button type="button" data-frage="Quiz">🎯 Quiz</button>
-    <button type="button" data-frage="Gib mir Schreibtipps.">💡 Schreibtipps</button>
-  </div>
-
-  <form id="bot-form">
-    <input
-      id="bot-eingabe"
-      type="text"
-      placeholder="Stelle deine Frage ..."
-      autocomplete="off"
-    >
-    <button id="bot-senden" type="submit">Senden</button>
-  </form>
-
-  <div class="bot-hinweis">
-    Automatische Lernhilfe · Keine KI-Verbindung
-  </div>
-
-</div>
-
-<script>
-(function () {
-  const toggle = document.getElementById("schreibbot-toggle");
-  const fenster = document.getElementById("schreibbot");
-  const schliessen = document.getElementById("bot-schliessen");
-  const form = document.getElementById("bot-form");
-  const eingabe = document.getElementById("bot-eingabe");
-  const nachrichten = document.getElementById("bot-nachrichten");
-
-  if (!toggle || !fenster || !schliessen || !form ||
-      !eingabe || !nachrichten) {
+  if (!toggle || !fenster || !schliessen || !nachrichten || !form || !eingabe) {
     return;
   }
 
-  let quizAktiv = false;
-  let quizFrage = 0;
-  let punkte = 0;
-
-  const quiz = [
-    {
-      frage: "Frage 1: Wie sollte ein Protokoll geschrieben werden?",
-      antwort: ["sachlich", "neutral", "objektiv"],
-      richtig: "Richtig! 🎉 Ein Protokoll wird sachlich und neutral geschrieben."
-    },
-    {
-      frage: "Frage 2: Welche W-Frage fragt nach dem Ort?",
-      antwort: ["wo"],
-      richtig: "Super! 🎉 Die Frage „Wo?“ fragt nach dem Ort."
-    },
-    {
-      frage: "Frage 3: Was enthält ein Ergebnisprotokoll hauptsächlich?",
-      antwort: ["ergebnisse", "beschlüsse"],
-      richtig: "Richtig! 🎉 Es enthält vor allem Ergebnisse und Beschlüsse."
-    }
-  ];
-
   function nachricht(text, klasse) {
-    const element = document.createElement("div");
-    element.className = "bot-nachricht " + klasse;
-    element.textContent = text;
-    nachrichten.appendChild(element);
+    const div = document.createElement("div");
+    div.className = "bot-nachricht" + (klasse ? " " + klasse : "");
+    div.textContent = text;
+    nachrichten.appendChild(div);
     nachrichten.scrollTop = nachrichten.scrollHeight;
   }
 
   function antwort(frage) {
     const f = frage.toLowerCase();
 
-    if (f === "quiz" || f.includes("quiz starten")) {
-      quizAktiv = true;
-      quizFrage = 0;
-      punkte = 0;
-      return quiz[0].frage;
+    if (f.includes("quiz")) {
+      return "🧠 Kleines Quiz:\n\n1. Was ist das Ziel eines Protokolls?\nEine richtige und sachliche Dokumentation.\n\n2. Welche Zeitform wird oft im Bericht verwendet?\nDas Präteritum (Vergangenheit).\n\n3. Darf ein Protokoll persönliche Meinungen enthalten?\nNein, es soll sachlich und neutral sein.";
     }
 
-    if (quizAktiv) {
-      const aktuelleFrage = quiz[quizFrage];
-
-      if (aktuelleFrage.antwort.some(a => f.includes(a))) {
-        punkte++;
-        nachricht(aktuelleFrage.richtig, "bot");
-      } else {
-        nachricht(
-          "Noch nicht ganz! Eine richtige Antwort wäre: " +
-          aktuelleFrage.antwort[0] + ".",
-          "bot"
-        );
-      }
-
-      quizFrage++;
-
-      if (quizFrage < quiz.length) {
-        return quiz[quizFrage].frage;
-      }
-
-      quizAktiv = false;
-
-      return "🎉 Das Quiz ist beendet! Du hast " +
-        punkte + " von " + quiz.length +
-        " Punkten erreicht. Schreibe „Quiz“, um erneut zu üben.";
-    }
-
-    if (f.includes("unterschied")) {
-      return "Ein Protokoll dokumentiert eine Besprechung oder Veranstaltung. Ein Bericht informiert über ein bestimmtes Ereignis.\n\nEin Protokoll hält häufig Beiträge, Ergebnisse und Beschlüsse fest. Ein Bericht beschreibt ein Ereignis zusammenhängend und sachlich.";
+    if (f.includes("unterschied") || (f.includes("protokoll") && f.includes("bericht"))) {
+      return "Ein Protokoll hält fest, was bei einem Gespräch, einer Sitzung oder einem Ereignis passiert ist. Ein Bericht informiert über ein Ereignis und beantwortet wichtige Fragen wie Wer, Was, Wann, Wo und Wie.";
     }
 
     if (f.includes("ergebnisprotokoll")) {
-      return "📌 ERGEBNISPROTOKOLL\n\nEin Ergebnisprotokoll hält die wichtigsten Ergebnisse, Beschlüsse und Aufgaben einer Besprechung fest.\n\nMerkmale:\n• Beschlüsse stehen im Mittelpunkt.\n• Keine ausführliche Wiedergabe jedes Gesprächs.\n• Sachliche und knappe Formulierungen.\n\nBeispiel: „Die Gruppe beschloss, die Präsentation bis Freitag fertigzustellen.“";
+      return "Ein Ergebnisprotokoll hält vor allem die Ergebnisse, Entscheidungen und Aufgaben einer Besprechung fest. Der genaue Gesprächsverlauf wird nicht ausführlich wiedergegeben.";
     }
 
     if (f.includes("verlaufsprotokoll")) {
-      return "📌 VERLAUFSPROTOKOLL\n\nEin Verlaufsprotokoll dokumentiert die wichtigsten Beiträge und den Ablauf einer Besprechung in zeitlicher Reihenfolge.\n\nMerkmale:\n• Reihenfolge des Gesprächs\n• Wichtige Argumente und Beiträge\n• Ergebnisse und Beschlüsse";
+      return "Ein Verlaufsprotokoll dokumentiert den Ablauf einer Besprechung möglichst in der richtigen Reihenfolge. Es hält wichtige Beiträge und Argumente fest.";
     }
 
     if (f.includes("kurzprotokoll")) {
-      return "📌 KURZPROTOKOLL\n\nEin Kurzprotokoll fasst die wichtigsten Informationen einer Besprechung knapp zusammen. Es konzentriert sich auf die wesentlichen Punkte und verzichtet auf ausführliche Einzelheiten.";
+      return "Ein Kurzprotokoll fasst die wichtigsten Inhalte knapp zusammen. Es enthält vor allem zentrale Informationen und Ergebnisse.";
     }
 
-    if (f.includes("aufbau") || f.includes("gliederung") || f.includes("struktur")) {
-      return "🏗️ AUFBAU EINES PROTOKOLLS\n\n1. KOPF:\n• Datum und Uhrzeit\n• Ort\n• Thema\n• Teilnehmende\n• Protokollführung\n\n2. HAUPTTEIL:\n• Besprochene Themen\n• Wichtige Beiträge\n• Ergebnisse und Beschlüsse\n\n3. SCHLUSS:\n• Aufgaben und Verantwortliche\n• Nächste Termine\n• Unterschrift";
+    if (f.includes("aufbau") || f.includes("struktur")) {
+      return "Ein Protokoll besteht meistens aus:\n\n1. Kopf: Datum, Ort, Thema und Teilnehmer\n2. Hauptteil: wichtige Inhalte und Gesprächsverlauf\n3. Schluss: Ergebnisse, Beschlüsse und Aufgaben\n\nEin Bericht hat häufig eine Einleitung, einen Hauptteil und einen Schluss.";
     }
 
-    if (f.includes("w-frage") || f.includes("w fragen") || f.includes("w-fragen")) {
-      return "❓ DIE W-FRAGEN\n\n• Wer? – Beteiligte Personen\n• Was? – Ereignis oder Thema\n• Wann? – Zeitpunkt\n• Wo? – Ort\n• Wie? – Ablauf\n• Warum? – Grund\n\nTipp: Beantworte die passenden W-Fragen, damit keine wichtigen Informationen fehlen.";
-    }
-
-    if (f.includes("sachlich") || f.includes("objektiv") || f.includes("neutral")) {
-      return "✍️ SACHLICH SCHREIBEN\n\nSchreibe ohne persönliche Meinung, Übertreibungen oder Gefühle.\n\n❌ „Die Besprechung war total langweilig.“\n\n✅ „Die Besprechung dauerte 45 Minuten.“\n\nBeschreibe Fakten statt persönlicher Eindrücke.";
-    }
-
-    if (f.includes("zeitform") || f.includes("präteritum") || f.includes("vergangenheit")) {
-      return "⏰ ZEITFORMEN\n\nBerichte und Protokolle werden häufig in der Vergangenheit geschrieben.\n\nBeispiel im Präteritum:\n„Die Gruppe besprach das Thema.“\n\nAchte auf eine einheitliche Zeitform.";
-    }
-
-    if (f.includes("beispiel") && f.includes("bericht")) {
-      return "📝 BEISPIEL FÜR EINEN BERICHT\n\nAm Montagmorgen fand in der Schule ein Projekttag statt. Die Schülerinnen und Schüler arbeiteten in verschiedenen Gruppen an ihren Aufgaben. Anschließend stellten sie ihre Ergebnisse vor. Der Projekttag endete um 13 Uhr.";
+    if (f.includes("checkliste")) {
+      return "✅ Checkliste:\n\n□ Überschrift vorhanden?\n□ Datum und Ort angegeben?\n□ Thema genannt?\n□ Wichtige Personen erwähnt?\n□ Ereignisse in richtiger Reihenfolge?\n□ Sachlich und verständlich geschrieben?\n□ Rechtschreibung überprüft?\n□ Ergebnisse oder Schluss vorhanden?";
     }
 
     if (f.includes("beispiel")) {
-      return "📄 BEISPIEL FÜR EIN PROTOKOLL\n\nThema: Planung eines Schulfestes\nDatum: 12. März 2026\nOrt: Klassenraum\n\nDie Klasse besprach die Planung des Schulfestes. Es wurde beschlossen, verschiedene Spielstationen aufzubauen. Zwei Gruppen übernehmen die Dekoration und die Organisation der Spiele.\n\nErgebnis: Die Aufgaben werden bis Freitag verteilt.";
+      return "📝 Beispiel für einen kurzen Bericht:\n\nAm Montag, dem 12. Mai, fand in der Schule ein Projekttag statt. Die Schülerinnen und Schüler arbeiteten in verschiedenen Gruppen. Dabei beschäftigten sie sich mit dem Thema Umweltschutz. Am Ende präsentierten die Gruppen ihre Ergebnisse.";
     }
 
-    if (f.includes("einleitung") || f.includes("hauptteil") || f.includes("schluss")) {
-      return "Einleitung: Nenne Thema, Datum, Ort und Beteiligte.\n\nHauptteil: Beschreibe die wichtigsten Ereignisse, Beiträge und Ergebnisse.\n\nSchluss: Halte Beschlüsse, Aufgaben und weitere Termine fest.";
+    if (f.includes("w-fragen") || f.includes("w fragen") || f.includes("w-frage")) {
+      return "Die W-Fragen helfen beim Schreiben eines Berichts:\n\n• Wer war beteiligt?\n• Was ist passiert?\n• Wann ist es passiert?\n• Wo ist es passiert?\n• Wie ist es passiert?\n• Warum ist es passiert?\n\nBeantworte die Fragen möglichst genau.";
     }
 
-    if (f.includes("checkliste") || f.includes("kontrollieren")) {
-      return "✅ DEINE CHECKLISTE\n\n☐ Sind Datum und Thema angegeben?\n☐ Sind alle wichtigen Informationen enthalten?\n☐ Sind die W-Fragen beantwortet?\n☐ Ist der Text sachlich geschrieben?\n☐ Ist der Text logisch aufgebaut?\n☐ Stimmen Rechtschreibung und Satzzeichen?";
+    if (f.includes("einleitung")) {
+      return "In der Einleitung nennst du kurz das Thema und die wichtigsten Informationen. Bei einem Bericht kannst du dort bereits sagen, wer, was, wann und wo beteiligt war.";
     }
 
-    if (f.includes("schreibtipp") || f.includes("tipps")) {
-      return "💡 5 SCHREIBTIPPS\n\n1. Sammle zuerst alle wichtigen Informationen.\n2. Ordne deine Gedanken nach Themen.\n3. Schreibe kurze und verständliche Sätze.\n4. Bleibe sachlich und neutral.\n5. Lies deinen Text am Ende sorgfältig durch.";
+    if (f.includes("hauptteil")) {
+      return "Im Hauptteil beschreibst du die Ereignisse oder Inhalte genauer. Achte auf eine logische Reihenfolge und wichtige Einzelheiten.";
     }
 
-    if (f.includes("fehler")) {
-      return "⚠️ HÄUFIGE FEHLER\n\n• Persönliche Meinungen einbauen\n• Wichtige Informationen vergessen\n• Unklare Reihenfolge\n• Umgangssprache verwenden\n• Zu lange Sätze schreiben\n• Rechtschreibung nicht kontrollieren\n\nTipp: Lies deinen Text am Ende noch einmal durch.";
+    if (f.includes("schluss") || f.includes("ende")) {
+      return "Im Schluss fasst du das Ergebnis zusammen oder nennst die Folgen des Ereignisses. Bei einem Protokoll gehören hier häufig Beschlüsse und Aufgaben hin.";
     }
 
-    if (f.includes("bericht")) {
-      return "📝 WAS IST EIN BERICHT?\n\nEin Bericht informiert sachlich über ein Ereignis. Er beantwortet wichtige W-Fragen und beschreibt den Ablauf verständlich.\n\nAufbau:\n1. Einleitung: Wer? Was? Wann? Wo?\n2. Hauptteil: Wie? Warum?\n3. Schluss: Ergebnis oder Folgen des Ereignisses.";
+    if (f.includes("zeitform") || f.includes("präteritum") || f.includes("vergangenheit")) {
+      return "Berichte werden häufig im Präteritum geschrieben. Beispiele:\n\n• gehen → ging\n• sehen → sah\n• passieren → passierte\n• machen → machte\n\nWichtig ist, dass du die Zeitform einheitlich verwendest.";
     }
 
-    if (f.includes("protokoll")) {
-      return "📄 WAS IST EIN PROTOKOLL?\n\nEin Protokoll ist eine schriftliche Aufzeichnung einer Besprechung oder Veranstaltung. Es hält wichtige Informationen, Beiträge, Ergebnisse und Beschlüsse fest.\n\nEs soll sachlich, übersichtlich und verständlich sein.";
+    if (f.includes("sachlich") || f.includes("neutral") || f.includes("meinung")) {
+      return "Schreibe sachlich und neutral. Vermeide persönliche Meinungen und Übertreibungen.\n\nNicht sachlich: Das Treffen war total langweilig.\nSachlich: Das Treffen dauerte etwa eine Stunde.";
     }
 
-    if (f.includes("hallo") || f.includes("hi") || f.includes("hey")) {
-      return "Hallo! 😊 Schön, dass du da bist. Frag mich etwas über Protokolle und Berichte oder starte ein Quiz!";
+    if (f.includes("anfang") || f.includes("beginnen") || f.includes("start")) {
+      return "Beginne mit den wichtigsten Informationen: Was ist passiert? Wann und wo? Wer war beteiligt? Danach kannst du die Einzelheiten in der richtigen Reihenfolge beschreiben.";
     }
 
     if (f.includes("danke")) {
-      return "Sehr gerne! ❤️ Viel Erfolg beim Schreiben!";
+      return "Sehr gerne! 😊 Viel Erfolg beim Schreiben!";
     }
 
-    if (f.includes("hilfe")) {
-      return "Ich kann dir helfen bei:\n\n📄 Protokollarten\n📝 Berichten\n🏗️ Aufbau und Gliederung\n❓ W-Fragen\n✍️ Sachlicher Sprache\n⏰ Zeitformen\n📚 Beispielen\n✅ Checklisten\n🎯 Quizfragen\n\nSchreib einfach ein Thema in das Eingabefeld!";
+    if (f.includes("hallo") || f.includes("hi") || f.includes("hey")) {
+      return "Hallo! 😊 Was möchtest du über Protokolle und Berichte wissen?";
     }
 
-    return "Das habe ich leider nicht ganz verstanden. 🤔\n\nFrag mich zum Beispiel:\n• Was ist ein Ergebnisprotokoll?\n• Wie ist ein Bericht aufgebaut?\n• Wie schreibe ich sachlich?\n• Zeige mir ein Beispiel.\n• Starte ein Quiz!";
+    if (f.includes("protokoll")) {
+      return "Ein Protokoll dokumentiert wichtige Inhalte einer Besprechung oder eines Ereignisses. Es hält beispielsweise Themen, wichtige Aussagen, Entscheidungen und Aufgaben fest. Möchtest du mehr über den Aufbau oder die verschiedenen Protokollarten wissen?";
+    }
+
+    if (f.includes("bericht")) {
+      return "Ein Bericht informiert sachlich über ein Ereignis. Er beantwortet die W-Fragen und beschreibt die Ereignisse in einer verständlichen Reihenfolge.";
+    }
+
+    if (f.includes("hilfe") || f.includes("tipps")) {
+      return "Meine Tipps:\n\n1. Sammle zuerst alle wichtigen Informationen.\n2. Sortiere sie in eine sinnvolle Reihenfolge.\n3. Schreibe sachlich und verständlich.\n4. Verwende passende Zeitformen.\n5. Lies deinen Text am Ende noch einmal durch.";
+    }
+
+    return "Das weiß ich gerade nicht genau. 🤔 Versuche es mit einer Frage zu Protokollarten, Aufbau, W-Fragen, Zeitformen oder sachlicher Sprache.";
   }
 
   function frageSenden(frage) {
     frage = frage.trim();
     if (!frage) return;
 
-    nachricht(frage, "user");
-    nachricht(antwort(frage), "bot");
+    nachricht(frage, "nutzer");
+    nachricht(antwort(frage));
     eingabe.value = "";
+    eingabe.focus();
   }
 
-  // Chatbot öffnen
   toggle.addEventListener("click", function () {
     fenster.classList.add("aktiv");
     eingabe.focus();
   });
 
-  // Chatbot schließen
   schliessen.addEventListener("click", function () {
     fenster.classList.remove("aktiv");
   });
 
-  // Nachricht senden
   form.addEventListener("submit", function (event) {
     event.preventDefault();
     frageSenden(eingabe.value);
   });
 
-  // Themenbuttons
-  fenster.querySelectorAll(".bot-vorschlaege button").forEach(function (button) {
+  fenster.querySelectorAll("[data-frage]").forEach(function (button) {
     button.addEventListener("click", function () {
-      frageSenden(button.dataset.frage);
+      frageSenden(button.getAttribute("data-frage"));
     });
   });
-
 })();
 </script>
-
-  
-
-
-    
-
 
 
 </body>
